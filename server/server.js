@@ -1,9 +1,8 @@
 import express from "express";
 import CORS from "cors";
-
+// NOTE: I installed pg, cors, and dotenv (they're necessary) 
 import { createClient } from "@supabase/supabase-js";
 import { userRouter } from "./routes/userRouter.js";
-// import { userController } from "./controllers/userController.js"
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import { checkDatabaseConnection } from "./models/models.js";
@@ -11,12 +10,12 @@ import { checkDatabaseConnection } from "./models/models.js";
 const app = express();
 dotenv.config();
 
-// const supabaseUrl = process.env.SUPABASE_URL;
-// // console.log('supabaseUrl',supabaseUrl)
-// const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseUrl = process.env.SUPABASE_URL;
+// console.log('supabaseUrl',supabaseUrl)
+const supabaseKey = process.env.SUPABASE_KEY;
 // const PORT = process.env.PORT;
-// const supabase = createClient(supabaseUrl, supabaseKey);
-// checkDatabaseConnection();
+const supabase = createClient(supabaseUrl, supabaseKey);
+checkDatabaseConnection();
 
 //          << Necessary >>
 // Converts incoming json in to js objects.
@@ -65,4 +64,4 @@ app.listen(PORT, () => {
   console.log(`⛵ Server listening on port: ${PORT}`);
 });
 
-// EXPORTS HERE
+export { supabase };

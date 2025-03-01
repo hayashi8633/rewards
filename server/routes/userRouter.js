@@ -19,8 +19,7 @@ userRouter.post("/register", userController.register, (req, res) => {
 
 // Client Dashboard
 userRouter.get("/dashboard", userController.getDash, (req, res) => {
-    console.log("GETTING TERRITORIESSSSSSSSSSS");
-    return res.status(200).json(res.locals.existingTerritories);
+    return res.status(200).json({});
 });
 
 export { userRouter };
