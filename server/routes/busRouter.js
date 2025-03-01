@@ -6,7 +6,7 @@ import { userController } from "../controllers/userController.js";
 const busRouter = express.Router();
 
 // Dashboard for Business
-busRouter.get("/dashboard", busController.getDash, (req, res) => {
+busRouter.get("/busDashboard", busController.getDash, (req, res) => {
     return res.status(200).json({});
 });
 

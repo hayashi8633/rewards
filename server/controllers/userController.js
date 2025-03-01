@@ -30,9 +30,9 @@ userController.loginUser = (req, res, next) => {
                 return next({
                   log: "log: No user found",
                   message: "Message: No user found",
-            });
-        }
-    });
+                });
+            }
+        });
         // check whether they're a business or customer (userType column in the database)
         // check if the password matches the phone # given
     } catch (err) {
@@ -68,7 +68,8 @@ userController.register = async (req, res, next) => {
 userController.getDash = (req, res, next) => {
     try {
         //logic for customer dashboard getting(?)
-
+        const data = []
+        const custDash = '';
         // get names of all the businesses they're a rewards member at, the number of times they've visited each business, and the customer's name
         // display it (aka feed it to the front end):D
     } catch (err) {
