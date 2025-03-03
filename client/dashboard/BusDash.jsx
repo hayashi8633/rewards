@@ -71,17 +71,29 @@ const BusDash = () => {
     getCustomerList();
   }, []);
 
-  const addCustomer = () => {
-    if (!newCustomer.phone.trim()) return;
+  const addCustomer = async (name, number) => {
+    // This was previously adding a new customer to the dummy customer list
+    // if (!newCustomer.phone.trim()) return;
 
-    const customer = {
-      id: newCustomer.id,
-      phone: newCustomer.phone,
-      name: newCustomer.name,
-      num_of_visits: 1,
-    };
-    setCustomers([...customers, customer]);
-    setNewCustomer({ phone: '' });
+    // const customer = {
+    //   id: newCustomer.id,
+    //   phone: newCustomer.phone,
+    //   name: newCustomer.name,
+    //   num_of_visits: 1,
+    // };
+    // setCustomers([...customers, customer]);
+    // setNewCustomer({ phone: '' });
+    try {
+      const response = await fetch("http://localhost:8082/api/bus/addStar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody)
+    });
+    } catch (error) {
+      
+    }
   };
 
   const updateVisits = async (phone, amount) => { // RENAMED ADDEND TO AMOUNT and CHANGED ID TO PHONE
