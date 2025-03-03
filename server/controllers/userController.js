@@ -5,7 +5,7 @@ import { supabase } from "../server.js";
 
 const userController = {};
 
-// TODO NOTE FOR RACHEL: REMEMBER THE REQ.HEADERS THING (put in handleClick header "user": "username" and you can have access to it and pass it as a param to the backend)
+// TODO NOTE FOR RACHEL: REMEMBER THE REQ.HEADERS THING (put in handleClick header "loggedUser": "username" and you can have access to it and pass it as a param to the backend)
 
 // This middleware will be used to login the user (could be customer or business)
 userController.loginUser = (req, res, next) => {
