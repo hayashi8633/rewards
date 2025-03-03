@@ -1,6 +1,6 @@
 //   <<Imports>>
 import express from "express";
-import { userController } from "../controllers/userController.js";
+import { busController } from "../controllers/busController.js";
 
 // Create a new router
 const busRouter = express.Router();
@@ -17,7 +17,7 @@ busRouter.post("/addCustomer", busController.addCustomer, (req, res) => {
 
 // Changing the number of stars a customer has
 busRouter.post("/addStar", busController.addStar, (req, res) => {
-    return res.status(200).json({});
+    return res.status(200).json(res.locals.addedStar);
 });
 
 export { busRouter };
