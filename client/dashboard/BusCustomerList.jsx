@@ -14,23 +14,16 @@ const BusCustomerList = ({ customers, updateVisits }) => {
     : customers;
 
   return (
-    <section className='customer-list' style={{ marginBottom: '20px' }}>
+    <section className='customer-list'>
       <h2>Customer List</h2>
       <input
         type='text'
         placeholder='Search by name or phone number'
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
       />
       <div
         className='customer-box'
-        style={{
-          height: '200px',
-          overflowY: 'scroll',
-          border: '1px solid #ccc',
-          padding: '10px',
-        }}
       >
         {customers.length === 0 ? (
           <p>Add a customer to get started!</p>

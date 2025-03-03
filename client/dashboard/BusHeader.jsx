@@ -1,4 +1,3 @@
-//imports
 import React from 'react';
 
 const BusHeader = ({ companyName }) => {

@@ -1,0 +1,97 @@
+body {
+    background-color: beige;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background-color: rgb(89, 139, 89);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.add-customer {
+    background-color: azure;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.add-customer h2 {
+    margin-top: 0px;
+}
+
+.add-customer input {
+    width: 80%;
+    margin-right: 10px;
+    padding: 10px;
+    border: 1px solid beige;
+    border-radius: 8px;
+}
+
+.add-customer button {
+    padding:10px 20px;
+    background-color: rgb(89, 139, 89);
+    color:white;
+    border: none;
+    border-radius: 8px;
+}
+
+.add-customer button:hover {
+    background-color: rgb(118, 140, 118);
+}
+
+.customer-list {
+    background-color: azure;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.customer-list h2 {
+    margin-top: 0px;
+}
+
+.customer-list input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid beige;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.customer-box {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid beige;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.customer-item {
+    border-bottom: 1px solid azure;
+    padding: 10px 0;
+}
+
+.customer-item div {
+    margin-bottom: 5px;
+}
+
+.customer-item button {
+    padding: 5px 10px;
+    background-color: rgb(89, 139, 89);
+    color: azure;
+    border: none;
+    border-radius: 8px;
+}

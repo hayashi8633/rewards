@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Cute+Font&display=swap');
 .customer-dash-container {
     display: flex;
     flex-direction: column;
@@ -9,11 +10,12 @@
     padding: 20px;
     border: 1px solid black;
     border-radius: 10px;
-    background: white;
+    background: rgb(255, 227, 232);
   }
   
   .cust-nav {
     display: flex;
+    font-family: CuteFont;
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
@@ -23,6 +25,7 @@
     max-width: 500px;
     border: 1px solid black;
     border-radius: 15px;
+    color: black;
   }
   
   .cust-nav button {
@@ -47,7 +50,7 @@
     max-width: 500px;
     height: 100vh;
     border: 1px solid black;
-    border-radius: 6px;
+    border-radius: 30px;
     overflow-y: scroll;
     padding-top: 10px;
     margin-bottom: 50px;

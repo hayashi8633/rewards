@@ -5,6 +5,7 @@ import BusHeader from './BusHeader';
 import BusAddCustomer from './BusAddCustomer';
 import BusCustomerList from './BusCustomerList';
 import BusManageRewards from './BusManageRewards';
+import './BusStyles.css'
 
 //http://localhost:8082/api/users/login
 
@@ -48,20 +49,35 @@ const BusDash = () => {
   const { businessName } = useParams(); // Fetches the business name from the url (i.e. localhost:3000/business/:businessName)
   
   const [companyName] = useState(businessName);
-  const [newCustomer, setNewCustomer] = useState({ phone: '' });
+  const [newCustomer, setNewCustomer] = useState({ phone: '', name: '' });
   // const [customers, setCustomers] = useState(testCustomerList);
   const [customers, setCustomers] = useState([]); // Initial customers to empty list
 
 
   async function getCustomerList() {
     try {
-        const response = await fetch(`http://localhost:8082/api/bus/busDashboard?businessName=${companyName}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+      console.log('IS THIS THE PROBLEM')
+      fetch(`http://localhost:8082/api/bus/busDashboard?businessName=${companyName}`, {credentials: 'include'})
+      .then(response=>{
+        if (!response){
+        throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const result = await response.json();
-        setCustomers(result);
-        console.log(result);
+        console.log('response: ', response);
+        return response.json();
+        })
+        .then(data => {
+          console.log("data,", data);
+          setCustomers(data)}
+  );
+
+//Old version -- async errors?
+        // const response = await fetch(`http://localhost:8082/api/bus/busDashboard?businessName=${companyName}`, {credentials: 'include'});
+        // if (!response.ok) {
+        //     throw new Error(`HTTP error! Status: ${response.status}`);
+        // }
+        // const result = await response.json();
+        // setCustomers(result);
+        // console.log(result);
     } catch (err) {
         alert("Error fetching customers from backend.");
     }
@@ -71,7 +87,7 @@ const BusDash = () => {
     getCustomerList();
   }, []);
 
-  const addCustomer = async (name, number) => {
+  const addCustomer = async () => {
     // This was previously adding a new customer to the dummy customer list
     // if (!newCustomer.phone.trim()) return;
 
@@ -83,16 +99,29 @@ const BusDash = () => {
     // };
     // setCustomers([...customers, customer]);
     // setNewCustomer({ phone: '' });
+    console.log('ADD CUSTOMER FUNCTION ON BUTTON')
+    const requestBody = {
+      name: newCustomer.name,
+      phone: newCustomer.phone,
+      business_name: companyName
+    }
+
     try {
-      const response = await fetch("http://localhost:8082/api/bus/addStar", {
+      const response = await fetch("http://localhost:8082/api/bus/addCustomer", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody)
     });
+
+    if(!response) {
+      throw new Error("Network response was not ok (addCustomer)");
+    }
+
+    getCustomerList();
     } catch (error) {
-      
+      console.error("Error submitting customer:", error);
     }
   };
 
@@ -129,20 +158,20 @@ const BusDash = () => {
         });
 
         if (!response) {
-            throw new Error("Network response was not ok");
+            throw new Error("Network response was not ok (updateVisits)");
         }
 
         // const result = await response.json();
         // console.log(response);
         getCustomerList();
     } catch (error) {
-        console.error("Error submitting data:", error);
+        console.error("Error submitting visits:", error);
         // setResponseMessage("Submission failed.");
     }
   };
 
   return (
-    <div className='dashboard' style={{ padding: '20px' }}>
+    <div className='dashboard'>
       <BusHeader companyName={companyName} />
       <BusAddCustomer
         newCustomer={newCustomer}

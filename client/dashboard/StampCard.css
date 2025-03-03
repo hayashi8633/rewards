@@ -4,6 +4,8 @@
     margin: 25px 0;
     border: 1px solid black;
     padding: 15px 12px 15px 12px;
+    color: black;
+    border-radius: 30px;
   }
   
   .stamp-title {
@@ -45,7 +47,7 @@
     display: flex;
     align-items: center;
   }
-  
+
   .stars-needed {
     margin-top: 5px;
   }

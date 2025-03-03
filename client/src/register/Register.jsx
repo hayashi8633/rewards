@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Registration() {
   const [username, updateUsername] = useState('');
@@ -6,13 +7,14 @@ function Registration() {
   const [password, updatePassword] = useState('');
   const [businessName, updateBusiness] = useState('');
   const [userType, updateUser] = useState('Customer');
+  const navigate = useNavigate();
 
   const cycle = {
     Customer: 'Business',
     Business: 'Customer',
   };
 
-  function submit() {
+  async function submit() {
     let userData;
     if (userType === 'Customer') {
       userData = {
@@ -30,16 +32,36 @@ function Registration() {
       };
     }
     console.log(userData);
+    // const response = await 
     fetch('http://localhost:8082/api/users/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify(userData),
-    }).then((response) => console.log(response));
+    }).then(response => response.json())
+    .then(data => {
+      if (data.usertype === "business") {
+        navigate(`../business/${data.username}`);
+      } else {
+        navigate(`../customer/${data.username}`);
+      }
+    });
+    //.then((response) => console.log('response: ', response));
     //send user data to appropriate endpoint, either to register customer or business
     //create cookie for username & ID, or Business Name & ID
-  }
 
+    // Commented out if statement cuz it was getting mad and it was scary
+    // if (!response) {
+    //   throw new Error(`Register error! Status: ${response.status}`);
+    // }
+  //   const data = await response.json();
+  //   if (data.usertype === "business") {
+  //     navigate(`../../business/${data.username}`);
+  //   } else {
+  //     navigate(`../customer/${data.username}`);
+  //   }
+  }
+  
   return (
     <div>
       <button onClick={() => updateUser(cycle[userType])}>

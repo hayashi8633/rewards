@@ -4,7 +4,7 @@ import React from 'react';
 const BusAddCustomer = ({ newCustomer, setNewCustomer, addCustomer }) => {
   
   return (
-    <section className='add-customer' style={{ marginBottom: '20px' }}>
+    <section className='add-customer'>
       <h2>Add New Customer</h2>
       <input
         type='text'
@@ -13,9 +13,16 @@ const BusAddCustomer = ({ newCustomer, setNewCustomer, addCustomer }) => {
         onChange={(e) =>
           setNewCustomer({ ...newCustomer, phone: e.target.value })
         }
-        style={{ marginRight: '10px', padding: '5px' }}
       />
-      <button onClick={addCustomer} style={{ padding: '5px 10px' }}>
+      <input
+      type='text'
+      placeholder='Name'
+      value={newCustomer.name}
+      onChange={(e) =>
+        setNewCustomer({ ...newCustomer, name: e.target.value })
+      }
+    />
+      <button onClick={addCustomer}>
         Add Customer
       </button>
     </section>
