@@ -7,12 +7,12 @@ const busRouter = express.Router();
 
 // Dashboard for Business
 busRouter.get("/busDashboard", busController.getDash, (req, res) => {
-    return res.status(200).json({});
+    return res.status(200).json(res.locals.allCustomers);
 });
 
 // Adding a customer into the database
 busRouter.post("/addCustomer", busController.addCustomer, (req, res) => {
-    return res.status(200).json({});
+    return res.status(200).json(res.locals.newCustomer);
 });
 
 // Changing the number of stars a customer has
