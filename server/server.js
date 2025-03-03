@@ -22,7 +22,10 @@ checkDatabaseConnection();
 //          << Necessary >>
 // CORS STUFF
 // run npm install cors
-app.use(CORS());
+app.use(CORS({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 // Converts incoming json in to js objects.
 app.use(express.json());
 
