@@ -1,0 +1,68 @@
+.customer-dash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  
+    width: 90%;
+    min-height: 500px;
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 10px;
+    background: white;
+  }
+  
+  .cust-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin: 50px auto;
+    height: 100px;
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid black;
+    border-radius: 15px;
+  }
+  
+  .cust-nav button {
+    height: 45px;
+    width: 100px;
+    border-radius: 15px;
+  }
+  
+  .card-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+  }
+  
+  .stamp-cards-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    height: 100vh;
+    border: 1px solid black;
+    border-radius: 6px;
+    overflow-y: scroll;
+    padding-top: 10px;
+    margin-bottom: 50px;
+  }
+  
+  .stamp-cards-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .stamp-cards-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .stamp-cards-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+  }
+  
