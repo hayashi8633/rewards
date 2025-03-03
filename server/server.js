@@ -3,8 +3,9 @@ import CORS from "cors";
 // NOTE: I installed pg, cors, and dotenv (they're necessary) 
 import { createClient } from "@supabase/supabase-js";
 import { userRouter } from "./routes/userRouter.js";
+import { busRouter } from "./routes/busRouter.js";
 import dotenv from "dotenv";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 import { checkDatabaseConnection } from "./models/models.js";
 
 const app = express();
@@ -15,17 +16,22 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 // const PORT = process.env.PORT;
 const supabase = createClient(supabaseUrl, supabaseKey);
+const PORT = process.env.PORT;
 checkDatabaseConnection();
 
 //          << Necessary >>
-// Converts incoming json in to js objects.
-app.use(express.json());
 // CORS STUFF
 // run npm install cors
-app.use(CORS());
+app.use(CORS({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
+// Converts incoming json in to js objects.
+app.use(express.json());
+
 // idk what these do but it's necessary just keep it
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.json()); // We don't need body parser if we're using express.json()
 
 // lets us know backend is running
 app.get("/", (req, res) => {
@@ -35,6 +41,7 @@ app.get("/", (req, res) => {
 
 // Routing for the user "database"
 app.use("/api/users", userRouter);
+app.use("/api/bus", busRouter);
 
 // Generic catch all for any bad requests
 app.use((req, res) => {
