@@ -11,8 +11,9 @@ const userController = {};
 userController.loginUser = (req, res, next) => {
   console.log("Customer login middleware reached");
   const data = [req.body.phone, req.body.password];
+  // res.locals.currentUser = req.body;
   const existingCust =
-    "SELECT name FROM accounts WHERE phone=$1 AND password=$2";
+    "SELECT name, user_type FROM accounts WHERE phone=$1 AND password=$2";
   // automatically assumes the login wll not work
   res.locals.loginSuccessful = false;
   try {
@@ -21,13 +22,14 @@ userController.loginUser = (req, res, next) => {
     // check if phone # exists first
     pool.query(existingCust, data, (error, results) => {
       console.log("results", results.rows);
+      res.locals.currentUser = {username: results.rows[0].name, phone: req.body.phone};
       // ^ this prints [ { name: 'rachel' } ]
 
       if (results.rowCount === 1) {
         // user is now logged in
         res.locals.loginSuccessful = true;
         // user's name is saved (for the "welcome, [user] message")
-        res.locals.user = results.rows[0];
+        res.locals.user = {username: results.rows[0].name, usertype: results.rows[0].user_type.toLowerCase()};
         return next();
       } else if (results.rowCount === 0) {
         return next({
@@ -36,6 +38,7 @@ userController.loginUser = (req, res, next) => {
         });
       }
     });
+    // res.redirect(`http://localhost:5173/business`)
     // check whether they're a business or customer (userType column in the database)
     // check if the password matches the phone # given
   } catch (err) {
@@ -84,13 +87,16 @@ userController.register = async (req, res, next) => {
   // get the name (of the business/customer), phone #, and password from the frontend
   // put "customer" in database if the user didn't click "yes" to the "are you a business?" question
   // put "business" in database if they did
-  const { name, phone, password, user_type } = req.body;
+  const { username, phone, password, usertype } = req.body;
+  res.locals.currentUser = req.body;
+  // console.log(req.body.username)
   try {
     //logic for registration attempts
     // check if the phone # already exists
-    const text = `SELECT EXISTS (SELECT 1 FROM accounts WHERE phoneNum = $1) AS exists;`;
+    console.log('TRY BLOCK ENTERED ALKDJFALSKDJF')
+    const text = `SELECT EXISTS (SELECT 1 FROM accounts WHERE phone = $1) AS exists;`;
     // return { "exists": true } if exists
-    const result = await pool.query(text, [phoneNum]);
+    const result = await pool.query(text, [phone]);
     if (result.rows[0].exists) {
       return next({
         log: 'Phone number existed.',
@@ -99,8 +105,10 @@ userController.register = async (req, res, next) => {
       });
     }
     const text1 = `INSERT INTO accounts (name, phone, password, user_type) VALUES ($1, $2, $3, $4)`;
-    await pool.query(text1, [name, phone, password, user_type]);
-    res.status(201).json({ message: 'Registration successful!' });
+    const results1 = await pool.query(text1, [username, phone, password, usertype]);
+    // res.locals.user = results1;
+    res.locals.user = {username: username, usertype: usertype.toLowerCase()};
+    // res.status(201).json({ message: 'Registration successful!' });
     return next();
     // if it does, return an error (or yell at the person registering and call em a dummy)
     // if it doesn't, log them in! and add a new row in business_name Table
@@ -120,11 +128,18 @@ userController.register = async (req, res, next) => {
 userController.getDash = (req, res, next) => {
   try {
     //logic for customer dashboard getting(?)
-    const data = [];
-    const custDash = `SELECT b.business_name, b.num_of_visits 
+    const data = [req.cookies.phone];
+    console.log("req.body:", req.body)
+    const custDash = `SELECT * FROM (SELECT b.business_name, b.num_of_visits, b.phone, b.customer_name 
         FROM business_info b 
-            JOIN accounts a ON b.phone = a.phone 
-            WHERE a.phone = ?;`;
+           RIGHT JOIN accounts a ON b.phone = a.phone) AS U WHERE U.phone = $1;`;
+
+    pool.query(custDash, data, (error, results) => {
+      res.locals.dashboard = results.rows;
+      console.log(res.locals.dashboard)
+      return next();
+    })
+    
     // get names of all the businesses they're a rewards member at, the number of times they've visited each business, and the customer's name
     // display it (aka feed it to the front end):D
   } catch (err) {
@@ -154,10 +169,11 @@ userController.isLoggedIn = (req, res, next) => {
 
 userController.setCookie = (req, res, next) => {
   try {
-    const currentUser = res.locals.user;
+    const currentUser = res.locals.currentUser;
     res.cookie('phone', currentUser.phone);
     res.cookie('username', currentUser.username);
-    console.log('cookies set!');
+    // console.log('res.locals.user: ', res.locals.user);
+    console.log('cookies set for ', currentUser);
     // console.log('res object: ', res._headers['set-cookie']);
     return next();
   } catch (err) {

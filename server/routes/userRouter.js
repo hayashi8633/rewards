@@ -19,7 +19,13 @@ userRouter.post("/register", userController.register, userController.setCookie, 
 
 // Client Dashboard
 userRouter.get("/dashboard", userController.isLoggedIn, userController.getDash, (req, res) => {
-    return res.status(200).json({});
+    return res.status(200).json(res.locals.dashboard);
 });
+
+userRouter.get("/logout", (req,res)=>{
+    res.clearCookie();
+    res.redirect("/");
+    res.status(200);
+})
 
 export { userRouter };

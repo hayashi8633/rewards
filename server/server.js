@@ -1,5 +1,6 @@
 import express from "express";
 import CORS from "cors";
+import cookieParser from "cookie-parser"
 // NOTE: I installed pg, cors, and dotenv (they're necessary) 
 import { createClient } from "@supabase/supabase-js";
 import { userRouter } from "./routes/userRouter.js";
@@ -28,6 +29,7 @@ app.use(CORS({
 }));
 // Converts incoming json in to js objects.
 app.use(express.json());
+app.use(cookieParser()); // to read cookies
 
 // idk what these do but it's necessary just keep it
 app.use(express.urlencoded({ extended: true }));
