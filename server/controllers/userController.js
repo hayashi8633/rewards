@@ -55,27 +55,31 @@ userController.register = async (req, res, next) => {
   try {
     //logic for registration attempts
     // check if the phone # already exists
-    // const text = `SELECT EXISTS (SELECT 1 FROM accounts WHERE phone = $1) AS exists;`;
-    // ^ was here before
-    const { user_type, phone, name } = req.body;
-
-    // user_type should pass 'customer' into the database if the "are you a business?" box is not checked- if it is, it should pass 'business' so that the SQL database can be updated accordingly
-    const text = `INSERT INTO accounts (user_type, phone, name) values ($1, $2, $3)`;
+    const text = `SELECT EXISTS (SELECT 1 FROM accounts WHERE phoneNum = $1) AS exists;`;
     // return { "exists": true } if exists
-    const result = await pool.query(text, [user_type, phone, name]);
-    res.locals.newUser = result;
-    return next();
-    // if (result.rows[0].exists)
+    const result = await pool.query(text, [phoneNum]);
+    if (result.rows[0].exists) {
+      return next({
+        log: 'Phone number existed.',
+        status: 400,
+        message: { err: 'The phone number is registered.' },
+      });
+    }
+    const text1 = `INSERT INTO business (name, phoneNum, password, userType) VALUES ($1, $2, $3, $4)`;
+    await pool.query(text1, [name, phoneNum, password, userType]);
+    return res.status(201).json({ message: 'Registration successful!' });
     // if it does, return an error (or yell at the person registering and call em a dummy)
     // if it doesn't, log them in! and add a new row in business_name Table
     // MINI STRETCH GOAL: if the phone # already exists, instead of throwing an error and breaking code, the frontend could shake and the input fields could turn red and a little message could show up at the bottom of the screen saying "this phone # is already taken!"
   } catch (err) {
     // error handling
     return next({
-      log: "log: Error registering user",
-      message: "Message: Error registering user",
+      log: 'Internal server error during registering.',
+      status: 500,
+      message: { err: 'Error in Register.' },
     });
   }
+  // after registration should redirect to dashboard
 };
 
 // THIS IS THE ONLY MIDDLEWARE THAT IS *ONLY* FOR CUSTOMERS
