@@ -5,6 +5,8 @@ import BusAddCustomer from './BusAddCustomer';
 import BusCustomerList from './BusCustomerList';
 import BusManageRewards from './BusManageRewards';
 
+//http://localhost:8082/api/users/login
+
 const BusDash = () => {
   //test customer list
   const testCustomerList = [
@@ -39,8 +41,7 @@ const BusDash = () => {
       num_of_visits: 5,
     },
   ];
-  //local states
-  //ok
+  //states
   const [companyName] = useState('companyName');
   const [newCustomer, setNewCustomer] = useState({ phone: '' });
   const [customers, setCustomers] = useState(testCustomerList);
@@ -49,9 +50,10 @@ const BusDash = () => {
     if (!newCustomer.phone.trim()) return;
 
     const customer = {
-      id: 999,
-      name: newCustomer.phone,
-      num_of_visits: 0,
+      id: newCustomer.id,
+      phone: newCustomer.phone,
+      name: newCustomer.name,
+      num_of_visits: 1,
     };
     setCustomers([...customers, customer]);
     setNewCustomer({ phone: '' });

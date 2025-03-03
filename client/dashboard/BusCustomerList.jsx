@@ -14,7 +14,7 @@ const BusCustomerList = ({ customers, updateVisits }) => {
     : customers;
 
   return (
-    <section className='customer-list' style={{ mnarginBottomL: '20px' }}>
+    <section className='customer-list' style={{ mnarginBottom: '20px' }}>
       <h2>Customer List</h2>
       <input
         type='text'
