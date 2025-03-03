@@ -2,6 +2,7 @@
 import React from 'react';
 
 const BusAddCustomer = ({ newCustomer, setNewCustomer, addCustomer }) => {
+  
   return (
     <section className='add-customer' style={{ marginBottom: '20px' }}>
       <h2>Add New Customer</h2>

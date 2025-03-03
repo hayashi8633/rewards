@@ -14,7 +14,7 @@ const BusCustomerList = ({ customers, updateVisits }) => {
     : customers;
 
   return (
-    <section className='customer-list' style={{ mnarginBottom: '20px' }}>
+    <section className='customer-list' style={{ marginBottom: '20px' }}>
       <h2>Customer List</h2>
       <input
         type='text'
@@ -39,7 +39,7 @@ const BusCustomerList = ({ customers, updateVisits }) => {
         ) : (
           filteredCustomers.map((customer) => (
             <BusCustomerItem
-              key={customers.id}
+              key={customer.id}
               customer={customer}
               updateVisits={updateVisits}
             />
