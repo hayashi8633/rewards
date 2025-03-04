@@ -2,85 +2,43 @@ import React from 'react';
 import StampCard from './StampCard';
 import './CustomerDash.css';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const handleLogOut = (navigate) => {
   fetch('http://localhost:8082/api/users/logout', { credentials: 'include' });
   navigate('/');
 };
 
-// const dummyData = [
-//   {
-//     businessName: 'Number 1 Tacos',
-//     stars: 5,
-//   },
-//   {
-//     businessName: 'Burrito Land',
-//     stars: 0,
-//   },
-//   {
-//     businessName: 'Dinosaur Coffee',
-//     stars: 10,
-//   },
-//   {
-//     businessName: 'Intelligentsia',
-//     stars: 5,
-//   },
-//   {
-//     businessName: 'Seafood Boil',
-//     stars: 0,
-//   },
-//   {
-//     businessName: 'Yumyum Coffee',
-//     stars: 10,
-//   },
-//   {
-//     businessName: 'Be For Reals Poke',
-//     stars: 5,
-//   },
-//   {
-//     businessName: 'King Pizza',
-//     stars: 0,
-//   },
-//   {
-//     businessName: 'Dinosaur LAST',
-//     stars: 10,
-//   },
-// ];
+//uses cookies to get user information but should be using the customerName probably? because as is I can type "Chapman" and it will say
+//hello Chapman but still display the card info for Katherine
 
 function CustomerDash() {
   const [business, setBusiness] = useState([]);
-  const [customerName, setName] = useState("");
+  const { customerName } = useParams();
   const navigate = useNavigate();
 
   async function getBusinessList() {
     try {
-      console.log('IS THIS THE PROBLEM')
-        const response = await fetch(`http://localhost:8082/api/users/dashboard`, {credentials: 'include'});
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const result = await response.json();
-        setBusiness(result);
-        
-        console.log('businesses: ', result);
+      const response = await fetch(
+        `http://localhost:8082/api/users/dashboard?customerName=${customerName}`, //slash customername?
+        { credentials: 'include' }
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const result = await response.json();
+      setBusiness(result);
+
+      console.log('businesses: ', result);
     } catch (err) {
-        alert("Error fetching customers from backend.");
+      alert('Error fetching customers from backend.');
     }
   }
-  
+
   useEffect(() => {
     getBusinessList();
   }, []);
 
-  useEffect(()=>{
-    if(business[0]){
-      setName(business[0].customer_name)
-    }
-  }, [business]);
-
-  console.log('business state: ', business);
-  
   return (
     <div className='customer-dash-container'>
       <div className='cust-nav'>
