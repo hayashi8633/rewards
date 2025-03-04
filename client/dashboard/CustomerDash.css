@@ -1,37 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Cute+Font&display=swap');
+
+
 .customer-dash-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  
+    max-width: 1200px;
     width: 90%;
     min-height: 500px;
     padding: 20px;
-    border: 1px solid black;
-    border-radius: 10px;
-    background: rgb(255, 227, 232);
+    /* border: 1px solid black; */
+    border-radius: 8px;
+    background-color: beige;
   }
   
   .cust-nav {
     display: flex;
-    font-family: CuteFont;
+    /* font-family: Cute Font; */
+    font-size: 20px;
     flex-direction: row;
     align-items: center;
     justify-content: space-around;
+    background-color: azure;
     margin: 50px auto;
     height: 100px;
     width: 100%;
     max-width: 500px;
-    border: 1px solid black;
-    border-radius: 15px;
+    /* border: 1px solid black; */
+    border-radius: 8px;
     color: black;
   }
   
   .cust-nav button {
-    height: 45px;
-    width: 100px;
-    border-radius: 15px;
+    height: 70px;
+    width: 170px;
+    border-radius: 8px;
+    background-color: black;
+    
+    /* border: 1px solid #012880;
+    background-image: linear-gradient(-180deg, #FF89D6 0%, #C01F9E 100%);
+    box-shadow: 0 1rem 1.25rem 0 rgba(22,75,195,0.50),
+                0 -0.25rem 1.5rem rgba(110, 15, 155, 1) inset,
+                0 0.75rem 0.5rem rgba(255, 255, 255, 0.71) inset,
+                0 0.25rem 0.5rem 0 rgba(180, 70, 207, 1) inset; */
+
   }
   
   .card-center {
@@ -44,15 +57,16 @@
   
   .stamp-cards-container {
     display: flex;
+    background-color: azure;
     flex-direction: column;
     align-items: center;
     width: 100%;
     max-width: 500px;
     height: 100vh;
-    border: 1px solid black;
-    border-radius: 30px;
+    /* border: 1px solid black; */
+    border-radius: 8px;
     overflow-y: scroll;
-    padding-top: 10px;
+    padding-top: 30px;
     margin-bottom: 50px;
   }
   

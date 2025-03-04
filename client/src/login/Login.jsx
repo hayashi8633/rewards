@@ -1,6 +1,8 @@
 import react from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Login.css';
+import goatLogo from '../assets/goatlogo.svg';
 
 function Login() {
     const [username, setUser] = useState('');
@@ -28,8 +30,13 @@ function Login() {
   }
 
   return (
-    <div>
-      <h4>Welcome back!</h4>
+    <div className='login-container'>
+      <div className='goat-logo'>
+        <img id="rewardsgoat" src={goatLogo} />
+      </div>
+
+      <h4>Rewards Goat</h4>
+      <h7>Login to Receive Rewards!</h7>
       <div>
         <input
           type='text'

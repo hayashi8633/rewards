@@ -109,7 +109,7 @@ busController.getDash = async (req, res, next) => {
       FROM accounts a 
       INNER JOIN business_info b ON a.name = b.customer_name AND b.business_name = '${data}' 
       WHERE a.user_type = 'Customer' 
-      ORDER BY num_of_visits DESC`;
+      ORDER BY id DESC`;
 
     // const result = await pool.query(busDash);
     const queryResult = await pool.query(busDash) // Renamed result -> queryResult because it's more descriptive and harder to confuse with the response we'd send back

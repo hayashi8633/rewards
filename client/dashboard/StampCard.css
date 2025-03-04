@@ -1,15 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Cute+Font&display=swap');
 .stamp-cards {
     width: 100%;
     max-width: 340px;
     margin: 25px 0;
-    border: 1px solid black;
+    /* border: 2px solid rgb(153, 0, 105); */
     padding: 15px 12px 15px 12px;
-    color: black;
+    color: white;
     border-radius: 30px;
+    /* -webkit-box-shadow: 20px 20px 10px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 20px 20px 10px 0px rgba(0,0,0,0.75);
+    box-shadow: 20px 20px 10px 0px rgba(0,0,0,0.75); */
+    background: rgba( 255, 255, 255, 0.25 );
+    box-shadow: 0 8px 32px 0 rgba(161, 243, 248, 0.37);
+    backdrop-filter: blur( 5.5px );
+    -webkit-backdrop-filter: blur( 5.5px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    background-color: #88aed0
   }
   
   .stamp-title {
-    font-size: 20px;
+    font-size: 30px;
+    margin-top: 0px;
+    font-weight: bold;
+    
+    /* font-family: Cute Font; */
     margin-bottom: 8px;
     padding-left: 5px;
   }

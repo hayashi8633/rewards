@@ -22,10 +22,12 @@ userRouter.get("/dashboard", userController.isLoggedIn, userController.getDash, 
     return res.status(200).json(res.locals.dashboard);
 });
 
-userRouter.get("/logout", (req,res)=>{
-    res.clearCookie();
-    res.redirect("/");
-    res.status(200);
-})
+userRouter.get('/logout', (req, res) => {
+
+    res.cookie('phone', '');
+    res.cookie('username', '');
+    console.log('res object: ', res._headers['set-cookie']);
+    res.status(200).send('logged out!');
+  });
 
 export { userRouter };

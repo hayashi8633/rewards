@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import BusCustomerItem from './BusCustomerItem';
 
 const BusCustomerList = ({ customers, updateVisits }) => {
-  //search functionality
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredCustomers = searchQuery
@@ -22,9 +21,13 @@ const BusCustomerList = ({ customers, updateVisits }) => {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div
-        className='customer-box'
-      >
+      <div className='customer-box'>
+        <div className='customer-table-header'>
+          <div>Name</div>
+          <div>Phone Number</div>
+          <div>Stars</div>
+          <div>Actions</div>
+        </div>
         {customers.length === 0 ? (
           <p>Add a customer to get started!</p>
         ) : filteredCustomers.length === 0 ? (

@@ -22,7 +22,7 @@ const BusAddCustomer = ({ newCustomer, setNewCustomer, addCustomer }) => {
         setNewCustomer({ ...newCustomer, name: e.target.value })
       }
     />
-      <button onClick={addCustomer}>
+      <button id="addCust" onClick={addCustomer}>
         Add Customer
       </button>
     </section>

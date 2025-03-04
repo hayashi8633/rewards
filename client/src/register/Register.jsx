@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Register.css';
 
 function Registration() {
   const [username, updateUsername] = useState('');
@@ -63,7 +64,7 @@ function Registration() {
   }
   
   return (
-    <div>
+    <div className='register-container'>
       <button onClick={() => updateUser(cycle[userType])}>
         Register As {userType}
       </button>
@@ -82,7 +83,9 @@ function Registration() {
           <label htmlFor='username'>Username </label>
           <input
             type='text'
+            className='inputss'
             id='username'
+            placeholder='What is your name?'
             onChange={(e) => updateUsername(e.target.value)}
           />
         </div>
@@ -91,7 +94,9 @@ function Registration() {
         <label htmlFor='phoneNumber'>Phone Number </label>
         <input
           type='number'
+          className='inputss'
           id='phoneNumber'
+          placeholder='What is your phone number?'
           onChange={(e) => updatePhone(e.target.value)}
         />
       </div>
@@ -99,13 +104,15 @@ function Registration() {
         <label htmlFor='password'>Password </label>
         <input
           type='password'
+          className='inputss'
+          placeholder='Password here:'
           id='password'
           onChange={(e) => updatePassword(e.target.value)}
         />
       </div>
-      <div>
-        <button onClick={submit}>Submit</button>
-      </div>
+      
+      <button onClick={submit}>Submit</button>
+      
     </div>
   );
 }

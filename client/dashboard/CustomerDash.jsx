@@ -2,9 +2,11 @@ import React from 'react';
 import StampCard from './StampCard';
 import './CustomerDash.css';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const handleLogOut = () => {
-  fetch('http://localhost:8082/api/users/logout', { credentials: 'include' })
+const handleLogOut = (navigate) => {
+  fetch('http://localhost:8082/api/users/logout', { credentials: 'include' });
+  navigate('/');
 };
 
 // const dummyData = [
@@ -49,6 +51,7 @@ const handleLogOut = () => {
 function CustomerDash() {
   const [business, setBusiness] = useState([]);
   const [customerName, setName] = useState("");
+  const navigate = useNavigate();
 
   async function getBusinessList() {
     try {
@@ -71,9 +74,9 @@ function CustomerDash() {
   }, []);
 
   useEffect(()=>{
-if(business[0]){
-  setName(business[0].customer_name)
-}
+    if(business[0]){
+      setName(business[0].customer_name)
+    }
   }, [business]);
 
   console.log('business state: ', business);
@@ -82,7 +85,7 @@ if(business[0]){
     <div className='customer-dash-container'>
       <div className='cust-nav'>
         <h2 className='welcome'>Welcome, {customerName}!</h2>
-        <button onClick={handleLogOut}>Log Out</button>
+        <button onClick={() => handleLogOut(navigate)}>Log Out</button>
       </div>
 
       <div className='card-center'>

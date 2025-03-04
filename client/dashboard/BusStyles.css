@@ -1,8 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 body {
     background-color: beige;
-    color: #333;
+    font-family: Source Code Pro;
     margin: 0;
     padding: 0;
+}
+
+input {
+    background-color: #bed7ef;
+    border-color: gray;
+    color: rgb(255, 255, 255);
+}
+
+.registrationInputs {
+    
+}
+
+.registrationInputs::placeholder{
+    text-align: center;
+}
+
+::placeholder {
+    color: white;
 }
 
 .dashboard {
@@ -11,8 +30,12 @@ body {
     padding: 20px;
 }
 
+#addCust {
+    margin-top: 5px;
+}
+
 header {
-    background-color: rgb(89, 139, 89);
+    background-color: #88aed0;
     color: white;
     padding: 20px;
     text-align: center;
@@ -42,14 +65,14 @@ header {
 
 .add-customer button {
     padding:10px 20px;
-    background-color: rgb(89, 139, 89);
+    background-color: #88aed0;
     color:white;
     border: none;
     border-radius: 8px;
 }
 
 .add-customer button:hover {
-    background-color: rgb(118, 140, 118);
+    background-color: #a8bccd;
 }
 
 .customer-list {
@@ -79,19 +102,53 @@ header {
     padding: 10px;
 }
 
-.customer-item {
-    border-bottom: 1px solid azure;
+.customer-table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    font-weight: bold;
     padding: 10px 0;
+    border-bottom: 2px solid beige;
+}
+
+.customer-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 10px 0;
+    border-bottom: 1px solid azure;
+    align-items: center; /* Align items vertically */
 }
 
 .customer-item div {
     margin-bottom: 5px;
 }
 
+.customer-item .actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
 .customer-item button {
     padding: 5px 10px;
-    background-color: rgb(89, 139, 89);
+    background-color: #88aed0;
     color: azure;
     border: none;
     border-radius: 8px;
+    margin: 2px;
+}
+
+.customer-item button:hover {
+    background-color: #a3bcd2;
+}
+
+.manage-rewards {
+    background-color: azure;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.manage-rewards h2 {
+    margin-top: 0;
 }
