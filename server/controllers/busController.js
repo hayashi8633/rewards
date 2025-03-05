@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
 import { pool } from '../models/models.js';
-import { supabase } from '../app.js';
+import { supabase } from '../server.js';
 
 const busController = {};
 
@@ -93,7 +93,7 @@ busController.getDash = async (req, res, next) => {
       ORDER BY id DESC`;
 
     // const result = await pool.query(busDash);
-    const queryResult = await pool.query(busDash, data); // Renamed result -> queryResult because it's more descriptive and harder to confuse with the response we'd send back
+    const queryResult = await pool.query(busDash); // Renamed result -> queryResult because it's more descriptive and harder to confuse with the response we'd send back
 
     // Transform response for front end
     const response = queryResult.rows.map((row) => ({
