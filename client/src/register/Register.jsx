@@ -33,47 +33,34 @@ function Registration() {
       };
     }
     console.log(userData);
-    // const response = await 
+    // const response = await
     fetch('http://localhost:8082/api/users/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify(userData),
-    }).then(response => response.json())
-    .then(data => {
-      if (data.usertype === "business") {
-        navigate(`../business/${data.username}`);
-      } else {
-        navigate(`../customer/${data.username}`);
-      }
-    });
-    //.then((response) => console.log('response: ', response));
-    //send user data to appropriate endpoint, either to register customer or business
-    //create cookie for username & ID, or Business Name & ID
-
-    // Commented out if statement cuz it was getting mad and it was scary
-    // if (!response) {
-    //   throw new Error(`Register error! Status: ${response.status}`);
-    // }
-  //   const data = await response.json();
-  //   if (data.usertype === "business") {
-  //     navigate(`../../business/${data.username}`);
-  //   } else {
-  //     navigate(`../customer/${data.username}`);
-  //   }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.usertype === 'business') {
+          navigate(`../business/${data.username}`);
+        } else {
+          navigate(`../customer/${data.username}`);
+        }
+      });
   }
-  
+
   return (
     <div className='register-container'>
-      <button onClick={() => updateUser(cycle[userType])}>
-        Register As {userType}
-      </button>
+      <h2>Register as {userType}</h2>
       {userType === 'Business' && (
         <div>
           <label htmlFor='businessName'>Business Name</label>
           <input
             type='text'
             id='businessName'
+            className='inputss'
+            placeholder='What is your business called?'
             onChange={(e) => updateBusiness(e.target.value)}
           />
         </div>
@@ -110,9 +97,15 @@ function Registration() {
           onChange={(e) => updatePassword(e.target.value)}
         />
       </div>
-      
-      <button onClick={submit}>Submit</button>
-      
+      <div>
+        <button onClick={submit}>Submit</button>{' '}
+        <button
+          className='switch-type'
+          onClick={() => updateUser(cycle[userType])}
+        >
+          Switch to {cycle[userType]} Registration
+        </button>
+      </div>
     </div>
   );
 }
