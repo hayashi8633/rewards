@@ -21,4 +21,9 @@ busRouter.post('/addStar', busController.addStar, (req, res) => {
   return res.status(200).send('stars changed!');
 });
 
+// 🪽 🪽 🪽 🪽 🪽 Wing's code begins 🪽 🪽 🪽 🪽 🪽
+busRouter.post('/removeStar', busController.removeStar, (req, res) => {
+  return res.status(200).send('stars redeemed!');
+}); 
+// 🪽 🪽 🪽 🪽 🪽 Wing's code end 🪽 🪽 🪽 🪽 🪽
 export { busRouter };
