@@ -67,6 +67,38 @@ busController.addStar = async (req, res, next) => {
   }
 };
 
+busController.isLoggedIn = (req, res, next) => {
+  const { phone, username } = req.cookies;
+  console.log('phone, ', phone);
+  console.log('username, ', username);
+  const endpoint = req.query.businessName;
+
+  console.log('endpoint: ', endpoint);
+
+  if (phone === '' || username === '') {
+    res.locals.loggedIn = false;
+    return next();
+  }
+  //SQL query to make sure that the ID and username match an ID and username in the database
+  const text = 'SELECT * FROM accounts WHERE phone=$1 AND name=$2';
+  const values = [phone, username];
+  pool.query(text, values).then((response) => {
+    // console.log('here is what isLogged in found: ', response);
+    if (
+      response.rows[0].name === username &&
+      response.rows[0].phone === phone &&
+      username === endpoint
+    ) {
+      res.locals.loggedIn = true;
+      return next();
+    } else {
+      console.log('you tried to go to the wrong page!');
+      res.locals.loggedIn = false;
+      return next();
+    }
+  });
+};
+
 // This middleware will be used to login the customer
 busController.getDash = async (req, res, next) => {
   console.log('Business DASHBOARD middleware reached');
