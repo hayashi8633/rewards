@@ -63,6 +63,10 @@ body {
     background-color: #acbdcb;
 }
 
+.loginStatus {
+    color: red;
+}
+
 .goat-logo {
     background-color: #88aed0;
     display: flex;
