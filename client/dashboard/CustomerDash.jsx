@@ -27,13 +27,19 @@ function CustomerDash() {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const result = await response.json();
+      if (!Array.isArray(result)) { // check if result is an array, if not, keep user on their page
+        // navigate('/access-denied'); // go to access denied page
+       navigate(-1); // send user back to previous page
+       alert('Access Denied'); // alert user
+      } 
       setBusiness(result);
 
       console.log('businesses: ', result);
     } catch (err) {
-      alert('Error fetching customers from backend.');
+      console.log('Error fetching customers from backend.');
     }
   }
+  
 
   useEffect(() => {
     getBusinessList();
@@ -41,9 +47,11 @@ function CustomerDash() {
 
   return (
     <div className='customer-dash-container'>
+    {business[0] !== undefined ? 
+    <>
       <div className='cust-nav'>
-        <h2 className='welcome'>Welcome, {customerName}!</h2>
-        <button onClick={() => handleLogOut(navigate)}>Log Out</button>
+        <h2 className='welcome'>Welcome, {customerName}! </h2>
+        <button className='logout' onClick={() => handleLogOut(navigate)}>Log Out</button>
       </div>
 
       <div className='card-center'>
@@ -57,6 +65,8 @@ function CustomerDash() {
           ))}
         </div>
       </div>
+
+      </> : 'Access Denied'}
     </div>
   );
 }
