@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
 import { pool } from '../models/models.js';
-import { supabase } from '../server.js';
+import { supabase } from '../app.js';
 
 const busController = {};
 
@@ -88,12 +88,12 @@ busController.getDash = async (req, res, next) => {
           ELSE b.num_of_visits
         END AS num_of_visits 
       FROM accounts a 
-      INNER JOIN business_info b ON a.name = b.customer_name AND b.business_name = '${data}' 
+      INNER JOIN business_info b ON a.name = b.customer_name AND b.business_name = $1 
       WHERE a.user_type = 'Customer' 
       ORDER BY id DESC`;
 
     // const result = await pool.query(busDash);
-    const queryResult = await pool.query(busDash); // Renamed result -> queryResult because it's more descriptive and harder to confuse with the response we'd send back
+    const queryResult = await pool.query(busDash, data); // Renamed result -> queryResult because it's more descriptive and harder to confuse with the response we'd send back
 
     // Transform response for front end
     const response = queryResult.rows.map((row) => ({
