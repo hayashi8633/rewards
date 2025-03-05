@@ -20,13 +20,17 @@ function CustomerDash() {
   async function getBusinessList() {
     try {
       const response = await fetch(
-        `http://localhost:8082/api/users/dashboard?customerName=${customerName}`, //slash customername?
+        `http://localhost:8082/api/users/dashboard?customerName=${customerName}`,
         { credentials: 'include' }
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const result = await response.json();
+      console.log('customer dash result: ', result);
+      if (!Array.isArray(result)) {
+        navigate('/');
+      }
       setBusiness(result);
 
       console.log('businesses: ', result);
