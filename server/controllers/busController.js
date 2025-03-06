@@ -69,37 +69,34 @@ busController.addStar = async (req, res, next) => {
 
 // 🪽 🪽 🪽 🪽 🪽 Wing's code begins 🪽 🪽 🪽 🪽 🪽
 
-busController.removeStar = async (req, res) => {
-  try {
-    const data = [req.body.business_name, req.body.amount, req.body.phone];
-    console.log('Data from POST request in removeStar:', req.body);
-
-    const removingStar = `
-      UPDATE business_info 
-      SET num_of_visits = CASE 
-                            WHEN num_of_visits + $2 < 0 THEN 0 
-                            ELSE num_of_visits + $2 
-                          END
-      WHERE business_name = $1 AND phone = $3
-      RETURNING num_of_visits;
-    `;
-
-    const result = await pool.query(removingStar, data);
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Business not found' });
+  busController.removeStar = async (req, res) => {
+    try {
+      const { business_name, amount, phone } = req.body;
+      console.log('Updating stars:', req.body);
+  
+      const updateQuery = `
+        UPDATE business_info 
+        SET num_of_visits = GREATEST(num_of_visits + $2, 0) 
+        WHERE business_name = $1 AND phone = $3
+        RETURNING num_of_visits;
+      `;
+  
+      const result = await pool.query(updateQuery, [business_name, amount, phone]);
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: 'Business not found' });
+      }
+  
+      return res.status(200).json({
+        message: "Stars updated successfully!",
+        stars: result.rows[0].num_of_visits, 
+      });
+  
+    } catch (err) {
+      console.error("Error updating stars:", err);
+      return res.status(500).json({ message: "Internal server error" });
     }
-
-    return res.status(200).json({
-      message: 'Stars redeemed successfully!',
-      updatedStars: result.rows[0].num_of_visits,
-    });
-
-  } catch (err) {
-    console.error('Error removing stars:', err);
-    return res.status(500).json({ message: 'Internal server error' });
-  }
-};
+  };
 
 // 🪽 🪽 🪽 🪽 🪽 Wing's code end 🪽 🪽 🪽 🪽 🪽
 

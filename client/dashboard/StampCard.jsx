@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './StampCard.css';
-import starFilled from '../assets/star-filled.svg';
-import starUnfilled from '../assets/star-unfilled.svg';
-
+import starFilled from '../src/assets/star-filled.svg';
+import starUnfilled from '../src/assets/star-unfilled.svg';
 
 // 🪽 🪽 🪽 🪽 🪽 Wing's code begins 🪽 🪽 🪽 🪽 🪽 
 // { business_name: businessName, amount: -10, phone: phone }
-const handleRedeem = async (businessName, amount, phone, setStars) => {
+
+const handleRedeem = async (businessName, phone, onRedeem, setStars) => {
   const requestBody = {
-    amount: amount - 10, 
+    amount: -10, 
     phone: phone, 
     business_name: businessName,
   };
+
   try {
     const response = await fetch("http://localhost:8082/api/bus/removeStar", {
       method: "POST",
@@ -22,20 +23,29 @@ const handleRedeem = async (businessName, amount, phone, setStars) => {
     });
 
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      const errorText = await response.text();
+      throw new Error(`Network response was not ok: ${errorText}`);
     }
 
     const data = await response.json();
-    setStars(data.amount); // Update stars in UI after successful redemption
+    console.log("Redeem API Response:", data);
+
+    setStars(data.stars); // Update local state
+    onRedeem(businessName, data.stars); // Update parent state (CustomerDash)
 
   } catch (error) {
     console.error("Error processing redemption:", error);
   }
 };
 
-function StampCard({ businessName, stars: initialStars, phone }) {
+function StampCard({ businessName, stars, phone, onRedeem }) {
   const totalStamps = 10;
-  const [stars, setStars] = useState(initialStars);
+  const [starsState, setStars] = useState(stars);
+
+  // Sync state with props when stars change
+  useEffect(() => {
+    setStars(stars);
+  }, [stars]);
 
   return (
     <div className='stamp-cards'>
@@ -51,15 +61,15 @@ function StampCard({ businessName, stars: initialStars, phone }) {
           ))}
         </div>
         <div className='redeem-container'>
-          {stars >= 10 ? (
+          {stars == 10 ? (
             <button
               className='redeem-btn'
-              onClick={() => handleRedeem(businessName, phone, setStars)}
+              onClick={() => handleRedeem(businessName, phone, onRedeem, setStars)}
             >
               Redeem
             </button>
           ) : (
-            <p className='stars-needed'>{10 - stars} stars until your next reward!</p>
+            <p className='stars-needed'>{10 - starsState} stars until your next reward!</p>
           )}
         </div>
       </div>
@@ -68,6 +78,7 @@ function StampCard({ businessName, stars: initialStars, phone }) {
 }
 
 export default StampCard;
+
 
 
 // const handleRedeem = async (businessName, stars, customer) => {
