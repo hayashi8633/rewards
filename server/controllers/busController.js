@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
 import { pool } from '../models/models.js';
-import { supabase } from '../server.js';
+import { supabase } from '../app.js';
 
 const busController = {};
 
@@ -68,6 +68,38 @@ busController.addStar = async (req, res, next) => {
   }
 };
 
+busController.isLoggedIn = (req, res, next) => {
+  const { phone, username } = req.cookies;
+  console.log('phone, ', phone);
+  console.log('username, ', username);
+  const endpoint = req.query.businessName;
+
+  console.log('endpoint: ', endpoint);
+
+  if (phone === '' || username === '') {
+    res.locals.loggedIn = false;
+    return next();
+  }
+  //SQL query to make sure that the ID and username match an ID and username in the database
+  const text = 'SELECT * FROM accounts WHERE phone=$1 AND name=$2';
+  const values = [phone, username];
+  pool.query(text, values).then((response) => {
+    // console.log('here is what isLogged in found: ', response);
+    if (
+      response.rows[0].name === username &&
+      response.rows[0].phone === phone &&
+      username === endpoint
+    ) {
+      res.locals.loggedIn = true;
+      return next();
+    } else {
+      console.log('you tried to go to the wrong page!');
+      res.locals.loggedIn = false;
+      return next();
+    }
+  });
+};
+
 // 🪽 🪽 🪽 🪽 🪽 Wing's code begins 🪽 🪽 🪽 🪽 🪽
 
   busController.removeStar = async (req, res) => {
@@ -122,7 +154,7 @@ busController.getDash = async (req, res, next) => {
           ELSE b.num_of_visits
         END AS num_of_visits 
       FROM accounts a 
-      INNER JOIN business_info b ON a.name = b.customer_name AND b.business_name = '${data}' 
+      INNER JOIN business_info b ON a.name = b.customer_name AND b.business_name = $1 
       WHERE a.user_type = 'Customer' 
       ORDER BY id DESC`;
 
