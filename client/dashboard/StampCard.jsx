@@ -3,6 +3,36 @@ import './StampCard.css';
 import starFilled from '../src/assets/star-filled.svg';
 import starUnfilled from '../src/assets/star-unfilled.svg';
 
+// const handleRedeem = async (businessName, stars, customer) => {
+//   try {
+//     // const requestBody = {
+//     //   amount: amount,
+//     //   phone: phone,
+//     //   business_name: companyName
+//     // };
+
+//     const response = await fetch("http://localhost:8082/api/bus/addStar", {
+//         method: "POST",
+//         // mode: "no-cors", // Mysterious cors error- add this next time you get one and it fixes yayyy
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(requestBody)
+//     });
+
+//     if (!response) {
+//         throw new Error("Network response was not ok (updateVisits)");
+//     }
+
+//     // const result = await response.json();
+//     // console.log(response);
+//     getCustomerList();
+// } catch (error) {
+//     console.error("Error submitting visits:", error);
+//     // setResponseMessage("Submission failed.");
+// }
+// };
+
 // 🪽 🪽 🪽 🪽 🪽 Wing's code begins 🪽 🪽 🪽 🪽 🪽 
 // { business_name: businessName, amount: -10, phone: phone }
 
@@ -95,36 +125,6 @@ function StampCard({ businessName, stars, phone, onRedeem }) {
 export default StampCard;
 
 
-
-// const handleRedeem = async (businessName, stars, customer) => {
-//   try {
-//     // const requestBody = {
-//     //   amount: amount,
-//     //   phone: phone,
-//     //   business_name: companyName
-//     // };
-
-//     const response = await fetch("http://localhost:8082/api/bus/addStar", {
-//         method: "POST",
-//         // mode: "no-cors", // Mysterious cors error- add this next time you get one and it fixes yayyy
-//         headers: {
-//             "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(requestBody)
-//     });
-
-//     if (!response) {
-//         throw new Error("Network response was not ok (updateVisits)");
-//     }
-
-//     // const result = await response.json();
-//     // console.log(response);
-//     getCustomerList();
-// } catch (error) {
-//     console.error("Error submitting visits:", error);
-//     // setResponseMessage("Submission failed.");
-// }
-// };
 
 // function StampCard(props) {
 //   const totalStamps = 10;
