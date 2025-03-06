@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
 import { pool } from '../models/models.js';
-import { supabase } from '../server.js';
+import { supabase } from '../app.js';
 
 const userController = {};
 
@@ -22,10 +22,6 @@ userController.loginUser = (req, res, next) => {
     // check if phone # exists first
     pool.query(existingCust, data, (error, results) => {
       console.log('results', results.rows);
-      res.locals.currentUser = {
-        username: results.rows[0].name,
-        phone: req.body.phone,
-      };
       // ^ this prints [ { name: 'rachel' } ]
 
       if (results.rowCount === 1) {
@@ -65,7 +61,7 @@ userController.register = async (req, res, next) => {
   try {
     //logic for registration attempts
     // check if the phone # already exists
-    console.log('TRY BLOCK ENTERED ALKDJFALSKDJF');
+    console.log('TRY BLOCK ENTERED');
     const text = `SELECT EXISTS (SELECT 1 FROM accounts WHERE phone = $1) AS exists;`;
     // return { "exists": true } if exists
     const result = await pool.query(text, [phone]);
@@ -147,6 +143,10 @@ userController.isLoggedIn = (req, res, next) => {
 
   console.log('endpoint: ', endpoint);
 
+  if (phone === '' || username === '') {
+    res.locals.loggedIn = false;
+    return next();
+  }
   //SQL query to make sure that the ID and username match an ID and username in the database
   const text = 'SELECT * FROM accounts WHERE phone=$1 AND name=$2';
   const values = [phone, username];
@@ -163,8 +163,6 @@ userController.isLoggedIn = (req, res, next) => {
       console.log('you tried to go to the wrong page!');
       res.locals.loggedIn = false;
       return next();
-      // res.redirect('http://localhost:5173/');
-      //this does not work!
     }
   });
 };
@@ -182,5 +180,6 @@ userController.setCookie = (req, res, next) => {
     return next(err);
   }
 };
+
 
 export { userController };

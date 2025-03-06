@@ -1,6 +1,6 @@
 //imports
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import BusHeader from './BusHeader';
 import BusAddCustomer from './BusAddCustomer';
 import BusCustomerList from './BusCustomerList';
@@ -17,6 +17,7 @@ const BusDash = () => {
   const [customers, setCustomers] = useState([]); // Initial customers to empty list
   const [newReward, setNewReward] = useState({ num_of_stars: '', type: '' });
   const [rewards, setRewards] = useState([]); //list of rewards
+  const navigate = useNavigate();
 
   
   async function getCustomerList() {
@@ -34,6 +35,9 @@ const BusDash = () => {
           return response.json();
         })
         .then((data) => {
+          if (!Array.isArray(data)) {
+            navigate('/');
+          }
           // console.log("data,", data);
           setCustomers(data);
         });

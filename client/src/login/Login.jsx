@@ -1,4 +1,4 @@
-import react from 'react';
+import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
@@ -7,6 +7,7 @@ import goatLogo from '../assets/goatlogo.svg';
 function Login() {
     const [username, setUser] = useState('');
     const [password, setPass] = useState('');
+    const [status, setStatus] = useState('');
     const navigate = useNavigate();
 
   async function submit() {
@@ -19,6 +20,8 @@ function Login() {
       body: JSON.stringify({ phone: username, password: password }),
     });
     if (!response.ok) {
+      console.log('Incorrect phone or password');
+      setStatus(false);
       throw new Error(`Login error! Status: ${response.status}`);
     }
     const data = await response.json();
@@ -53,6 +56,7 @@ function Login() {
           onChange={(e) => setPass(e.target.value)}
         />
       </div>
+      <div className='loginStatus'> {status === false ? 'Incorrect phone or password.' : ''}</div>
       <div>
         <button onClick={submit}>Login</button>
         <button onClick={() => navigate('/register')}>Register</button>
