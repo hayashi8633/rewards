@@ -3,7 +3,6 @@ import StampCard from './StampCard';
 import './CustomerDash.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const handleLogOut = (navigate) => {
   fetch('http://localhost:8082/api/users/logout', { credentials: 'include' });
@@ -17,7 +16,6 @@ const handleLogOut = (navigate) => {
 
 function CustomerDash() {
   const [business, setBusiness] = useState([]);
-  const { customerName } = useParams();
   const { customerName } = useParams();
   const navigate = useNavigate();
 
@@ -46,10 +44,15 @@ function CustomerDash() {
   }
   // Wing's added code:
   const updateStars = (businessName, newStars) => {
-    setBusiness((prevBusiness) =>  // prevBusiness contain's the most recent state
-      prevBusiness.map((b) =>
-        b.business_name === businessName ? { ...b, num_of_visits: newStars } : b
-      )
+    setBusiness(
+      (
+        prevBusiness // prevBusiness contain's the most recent state
+      ) =>
+        prevBusiness.map((b) =>
+          b.business_name === businessName
+            ? { ...b, num_of_visits: newStars }
+            : b
+        )
     );
   };
   // Wing's code ends
@@ -60,29 +63,32 @@ function CustomerDash() {
 
   return (
     <div className='customer-dash-container'>
-      
-      {Array.isArray(business) ? 
-    <>
-      <div className='cust-nav'>
-        <h2 className='welcome'>Welcome, {customerName}! </h2>
-        <button className='logout' onClick={() => handleLogOut(navigate)}>Log Out</button>
-      </div>
+      {Array.isArray(business) ? (
+        <>
+          <div className='cust-nav'>
+            <h2 className='welcome'>Welcome, {customerName}! </h2>
+            <button className='logout' onClick={() => handleLogOut(navigate)}>
+              Log Out
+            </button>
+          </div>
 
-      <div className='card-center'>
-        <div className='stamp-cards-container'>
-          {business.map((card, index) => (
-            <StampCard
-              key={index}
-              businessName={card.business_name}
-              stars={card.num_of_visits}
-              phone={card.phone} // Wing's added code
-              onRedeem={updateStars} // Wing's added code 
-            />
-          ))}
-        </div>
-      </div>
-
-      </> : 'Access Denied'}
+          <div className='card-center'>
+            <div className='stamp-cards-container'>
+              {business.map((card, index) => (
+                <StampCard
+                  key={index}
+                  businessName={card.business_name}
+                  stars={card.num_of_visits}
+                  phone={card.phone} // Wing's added code
+                  onRedeem={updateStars} // Wing's added code
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        'Access Denied'
+      )}
     </div>
   );
 }
