@@ -41,8 +41,20 @@ const handleRedeem = async (businessName, phone, onRedeem, setStars) => {
 function StampCard({ businessName, stars, phone, onRedeem }) {
   const totalStamps = 10;
   const [starsState, setStars] = useState(stars);
+  const [message, setMessage] = useState("");
 
-  // Sync state with props when stars change
+  useEffect(() => {
+    const logStarsMessage = (starsState) => {
+      if (starsState < 10) {
+        setMessage("Stars until your next reward!");
+      } else {
+        setMessage(`You have ${starsState} stars!`);
+      }
+    };
+
+    logStarsMessage(starsState);
+  }, [starsState]); 
+
   useEffect(() => {
     setStars(stars);
   }, [stars]);
@@ -61,15 +73,18 @@ function StampCard({ businessName, stars, phone, onRedeem }) {
           ))}
         </div>
         <div className='redeem-container'>
-          {stars == 10 ? (
+          {stars >= 10 ? (
+            <>
             <button
               className='redeem-btn'
               onClick={() => handleRedeem(businessName, phone, onRedeem, setStars)}
             >
               Redeem
             </button>
+            <p className='stars-met'>You have {starsState} stars!</p>
+            </>
           ) : (
-            <p className='stars-needed'>{10 - starsState} stars until your next reward!</p>
+              <p className='stars-needed'>{message}</p>
           )}
         </div>
       </div>
