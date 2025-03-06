@@ -15,7 +15,7 @@ const handleLogOut = (navigate) => {
 //hello Chapman but still display the card info for Katherine
 
 function CustomerDash() {
-  const [business, setBusiness] = useState([]);
+  const [business, setBusiness] = useState('');
   const { customerName } = useParams();
   const navigate = useNavigate();
 
@@ -32,9 +32,11 @@ function CustomerDash() {
       if (!Array.isArray(result)) {
         // check if result is an array, if not, keep user on their page
         // navigate('/access-denied'); // go to access denied page
-        navigate(-1); // send user back to previous page
-        alert('Access Denied'); // alert user
-      }
+        // frontend redirect if user tries to go to another user's page
+        console.log('NAVIGATING BACK TO USER PAGE');
+       navigate(-1); // send user back to previous page
+       alert('Access Denied'); // alert user
+      } 
       setBusiness(result);
 
       console.log('businesses: ', result);

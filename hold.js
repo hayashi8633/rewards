@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
 import { pool } from '../models/models.js';
-// import { supabase } from '../server.js';
+import { supabase } from '../server.js';
 
 // import bcrypt
 const SALT_WORK_FACTOR = 10;
@@ -25,13 +25,14 @@ userController.register = async (req, res, next) => {
   // res.locals.currentUser = req.body;
   // console.log(req.body.username)
   try {
-     // hash password
-        const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        console.log('HASH PASS', hashedPassword);
+    // hash password
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    console.log('HASH PASS', hashedPassword);
+    
     //logic for registration attempts
     // check if the phone # already exists
-    console.log('TRY BLOCK ENTERED');
+    console.log('TRY BLOCK ENTERED ALKDJFALSKDJF');
     const text = `SELECT EXISTS (SELECT 1 FROM accounts WHERE phone = $1) AS exists;`;
     // return { "exists": true } if exists
     const result = await pool.query(text, [phone]);
@@ -41,10 +42,9 @@ userController.register = async (req, res, next) => {
         status: 400,
         message: { err: 'The phone number is registered.' },
       });
-      // would be good to add something here
-      // hopefully htis is enough content.
-      // making videos can be a lot sometimes
     }
+    // insert bcrypt functionality here
+    // return hashed password to query values
     const text1 = `INSERT INTO accounts (name, phone, password, user_type) VALUES ($1, $2, $3, $4)`;
     const results1 = await pool.query(text1, [
       username,
@@ -73,47 +73,28 @@ userController.register = async (req, res, next) => {
 };
 
 // This middleware will be used to login the user (could be customer or business)
-// CURRENTLY DOES NOT WORK FOR NON HASHED PASSWORDS
-userController.loginUser = async (req, res, next) => {
+userController.loginUser = (req, res, next) => {
   console.log('Customer login middleware reached');
-  const { phone, password } = req.body;
-  console.log('REQ INFO', phone, password);
-
-  // compare passed in password using bcrypt to determine login success
-  //bcrypt.compare(myPlaintextPassword, hash, function(err, result) {
-  //     // result == true
-  // });
- 
-
-  const data = [phone];
-  console.log('COMPLETE DATA IS', data)
+  const data = [req.body.phone, req.body.password];
   // res.locals.currentUser = req.body;
+  
   const existingCust =
-    'SELECT name, user_type, password FROM accounts WHERE phone=$1';
+    'SELECT name, user_type FROM accounts WHERE phone=$1 AND password=$2';
   // automatically assumes the login wll not work
   res.locals.loginSuccessful = false;
   try {
     //logic for customer login attempts
 
     // check if phone # exists first
-    pool.query(existingCust, data, async (error, results) => {
+    pool.query(existingCust, data, (error, results) => {
       console.log('results', results.rows);
-      // console.log('Password', results[0].password)
-      const hashedFromDb = results.rows[0].password;
-      // console.log("HASHED PW", hashedFromDb);
-
-      const dbMatch = await bcrypt.compare(password, hashedFromDb);
-      console.log('DB MATCH', dbMatch);
-
-      //  the below messes things up
-      // res.locals.currentUser = {
-      //   username: results.rows[0].name,
-      //   phone: req.body.phone,
-      // };
+      res.locals.currentUser = {
+        username: results.rows[0].name,
+        phone: req.body.phone,
+      };
       // ^ this prints [ { name: 'rachel' } ]
-      
-      // check that there is such a user and their password matches
-      if (results.rowCount === 1 && dbMatch) {
+
+      if (results.rowCount === 1) {
         // user is now logged in
         res.locals.loginSuccessful = true;
         // user's name is saved (for the "welcome, [user] message")
@@ -123,9 +104,7 @@ userController.loginUser = async (req, res, next) => {
           phone: req.body.phone,
         };
         return next();
-      } 
-      // if there is no such user or the password doesn't match
-      else if (results.rowCount === 0 || !dbMatch) {
+      } else if (results.rowCount === 0) {
         return next({
           log: 'log: No user found',
           message: 'Message: No user found',
@@ -141,29 +120,12 @@ userController.loginUser = async (req, res, next) => {
   }
 };
 
+
 // THIS IS THE ONLY MIDDLEWARE THAT IS *ONLY* FOR CUSTOMERS
 userController.getDash = async (req, res, next) => {
-  const { username } = req.cookies;
-  console.log('logged in user is, ', username);
-  const endpoint = req.query.customerName;
-  // backend redirect if user tries to go to another user's page
-  if (username !== endpoint) {
-    console.log("REDIRECT FROM GET DASH");
-    // OPT 1 works for now
-    return res.redirect('/');
-    //  OPT 2 works most times, but sometimes glitches after a user has just registered
-    // res.locals.dashboard = 'nah';
-    // return next();
-    // OPT 3 causes big problems with login it seems
-    // return next({
-    //   log: 'Unauthorized acces',
-    //   message: 'Access Denied'
-    // })
-  }
-
   try {
     //logic for customer dashboard getting(?)
-console.log('RES LOCALS OBJECT', res.locals)
+
     const customerName = [req.query.customerName];
     //use req.query.customerName to get phone number
     //then pass that into data
@@ -180,7 +142,7 @@ console.log('RES LOCALS OBJECT', res.locals)
 
     pool.query(custDash, data, (error, results) => {
       res.locals.dashboard = results.rows;
-      console.log('DASHBOARD', res.locals.dashboard);
+      console.log(res.locals.dashboard);
       return next();
     });
 
@@ -203,14 +165,9 @@ userController.isLoggedIn = (req, res, next) => {
 
   console.log('endpoint: ', endpoint);
 
-  if (phone === '' || username === '') {
-    res.locals.loggedIn = false;
-    return next();
-  }
   //SQL query to make sure that the ID and username match an ID and username in the database
   const text = 'SELECT * FROM accounts WHERE phone=$1 AND name=$2';
   const values = [phone, username];
-  res.locals.loggedIn = false;
   pool.query(text, values).then((response) => {
     // console.log('here is what isLogged in found: ', response);
     if (
@@ -222,8 +179,10 @@ userController.isLoggedIn = (req, res, next) => {
       return next();
     } else {
       console.log('you tried to go to the wrong page!');
-      // res.locals.loggedIn = false;
+      res.locals.loggedIn = false;
       return next();
+      // res.redirect('http://localhost:5173/');
+      //this does not work!
     }
   });
 };
@@ -242,5 +201,63 @@ userController.setCookie = (req, res, next) => {
   }
 };
 
-
 export { userController };
+
+
+// // This middleware will be used to login the user (could be customer or business)
+// userController.loginUser = (req, res, next) => {
+//   console.log('Customer login middleware reached');
+//   const { phone, password } = req.body;
+
+//   // compare passed in password using bcrypt to determine login success
+//   //bcrypt.compare(myPlaintextPassword, hash, function(err, result) {
+//   //     // result == true
+//   // });
+//   const dbMatch =  bcrypt.compare(password, hash);
+//   console.log('DB MATCH', dbMatch);
+
+//   const data = [phone, dbMatch];
+//   console.log('COMPLETE DATA IS', data)
+//   // res.locals.currentUser = req.body;
+
+//   const existingCust =
+//     'SELECT name, user_type FROM accounts WHERE phone=$1 AND password=$2';
+//   // automatically assumes the login wll not work
+//   res.locals.loginSuccessful = false;
+//   try {
+//     //logic for customer login attempts
+
+//     // check if phone # exists first
+//     pool.query(existingCust, data, (error, results) => {
+//       console.log('RESULT FROM DB', results.rows);
+//       res.locals.currentUser = {
+//         username: results.rows[0].name,
+//         phone: req.body.phone,
+//       };
+//       // ^ this prints [ { name: 'rachel' } ]
+
+//       if (results.rowCount === 1) {
+//         // user is now logged in
+//         res.locals.loginSuccessful = true;
+//         // user's name is saved (for the "welcome, [user] message")
+//         res.locals.user = {
+//           username: results.rows[0].name,
+//           usertype: results.rows[0].user_type.toLowerCase(),
+//           phone: req.body.phone,
+//         };
+//         return next();
+//       } else if (results.rowCount === 0) {
+//         return next({
+//           log: 'log: No user found',
+//           message: 'Message: No user found',
+//         });
+//       }
+//     });
+//   } catch (err) {
+//     // error handling
+//     return next({
+//       log: 'log: Error getting users',
+//       message: 'Message: Error getting users',
+//     });
+//   }
+// };
