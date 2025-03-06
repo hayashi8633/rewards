@@ -31,7 +31,6 @@ userRouter.post(
 userRouter.get(
   '/dashboard',
   userController.isLoggedIn,
-  // this can be removed
   // (req, res, next) => {
   //   if (res.locals.loggedIn) {
   //     return next();
