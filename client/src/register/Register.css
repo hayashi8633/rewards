@@ -1,4 +1,3 @@
-
 /* 
 .register-container {
     display: flex;
@@ -16,53 +15,59 @@
     max-width: 1200px
 } */
 
+.switch-type {
+  font-size: x-small;
+  padding-top: .2em;
+  padding-bottom: .2em;
+  width: fit-content;
+  height: fit-content;
+}
 
 .register-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    max-width: 1200px;
-    width: 90%;
-    min-height: 250px;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: azure;
-    margin: 50px auto;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  width: 90%;
+  min-height: 250px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: azure;
+  margin: 50px auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .register-container input {
-    min-width: 250px;
-    max-width: 400px;
-    width: 80%;
-    margin: 10px 0;
-    padding: 10px;
-    border: 1px solid beige;
-    border-radius: 8px;
-    background-color: #bed7ef;
-    color: white;
+  min-width: 250px;
+  max-width: 400px;
+  width: 80%;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid beige;
+  border-radius: 8px;
+  background-color: #bed7ef;
+  color: white;
 }
 
-.inputss::placeholder{
-    text-align: center;
+.inputss::placeholder {
+  text-align: center;
 }
 
 .register-container button {
-    padding: 10px 20px;
-    width: 150px;
-    background-color: #88aed0;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    margin: 10px;
+  padding: 10px 20px;
+  width: 150px;
+  background-color: #88aed0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin: 10px;
 }
 
-.register-container button:nth-of-type(2) {
-    background-color: #d088ae !important;
+.register-container button:nth-of-type(1) {
+  background-color: #d088ae !important;
 }
-
 
 .register-container button:hover {
-    background-color: #acbdcb;
+  background-color: #acbdcb;
 }

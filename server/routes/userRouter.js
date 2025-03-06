@@ -52,4 +52,5 @@ userRouter.get('/logout', (req, res) => {
   res.status(200).send('logged out!');
 });
 
+
 export { userRouter };

@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
 import { pool } from '../models/models.js';
-import { supabase } from '../server.js';
+// import { supabase } from '../server.js';
 
 // import bcrypt
 const SALT_WORK_FACTOR = 10;
@@ -31,7 +31,7 @@ userController.register = async (req, res, next) => {
         console.log('HASH PASS', hashedPassword);
     //logic for registration attempts
     // check if the phone # already exists
-    console.log('TRY BLOCK ENTERED ALKDJFALSKDJF');
+    console.log('TRY BLOCK ENTERED');
     const text = `SELECT EXISTS (SELECT 1 FROM accounts WHERE phone = $1) AS exists;`;
     // return { "exists": true } if exists
     const result = await pool.query(text, [phone]);
@@ -149,7 +149,16 @@ userController.getDash = async (req, res, next) => {
   // backend redirect if user tries to go to another user's page
   if (username !== endpoint) {
     console.log("REDIRECT FROM GET DASH");
+    // OPT 1 works for now
     return res.redirect('/');
+    //  OPT 2 works most times, but sometimes glitches after a user has just registered
+    // res.locals.dashboard = 'nah';
+    // return next();
+    // OPT 3 causes big problems with login it seems
+    // return next({
+    //   log: 'Unauthorized acces',
+    //   message: 'Access Denied'
+    // })
   }
 
   try {
@@ -171,7 +180,7 @@ console.log('RES LOCALS OBJECT', res.locals)
 
     pool.query(custDash, data, (error, results) => {
       res.locals.dashboard = results.rows;
-      console.log(res.locals.dashboard);
+      console.log('DASHBOARD', res.locals.dashboard);
       return next();
     });
 
@@ -194,6 +203,10 @@ userController.isLoggedIn = (req, res, next) => {
 
   console.log('endpoint: ', endpoint);
 
+  if (phone === '' || username === '') {
+    res.locals.loggedIn = false;
+    return next();
+  }
   //SQL query to make sure that the ID and username match an ID and username in the database
   const text = 'SELECT * FROM accounts WHERE phone=$1 AND name=$2';
   const values = [phone, username];
@@ -211,8 +224,6 @@ userController.isLoggedIn = (req, res, next) => {
       console.log('you tried to go to the wrong page!');
       // res.locals.loggedIn = false;
       return next();
-      // res.redirect('http://localhost:5173/');
-      //this does not work!
     }
   });
 };
@@ -230,5 +241,6 @@ userController.setCookie = (req, res, next) => {
     return next(err);
   }
 };
+
 
 export { userController };

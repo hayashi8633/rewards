@@ -11,6 +11,8 @@ const handleLogOut = (navigate) => {
 
 //uses cookies to get user information but should be using the customerName probably? because as is I can type "Chapman" and it will say
 //hello Chapman but still display the card info for Katherine
+//uses cookies to get user information but should be using the customerName probably? because as is I can type "Chapman" and it will say
+//hello Chapman but still display the card info for Katherine
 
 function CustomerDash() {
   const [business, setBusiness] = useState('');
@@ -20,14 +22,15 @@ function CustomerDash() {
   async function getBusinessList() {
     try {
       const response = await fetch(
-        `http://localhost:8082/api/users/dashboard?customerName=${customerName}`, //slash customername?
+        `http://localhost:8082/api/users/dashboard?customerName=${customerName}`,
         { credentials: 'include' }
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const result = await response.json();
-      if (!Array.isArray(result)) { // check if result is an array, if not, keep user on their page
+      if (!Array.isArray(result)) {
+        // check if result is an array, if not, keep user on their page
         // navigate('/access-denied'); // go to access denied page
         // frontend redirect if user tries to go to another user's page
         console.log('NAVIGATING BACK TO USER PAGE');
@@ -41,7 +44,20 @@ function CustomerDash() {
       console.log('Error fetching customers from backend.');
     }
   }
-  
+  // Wing's added code:
+  const updateStars = (businessName, newStars) => {
+    setBusiness(
+      (
+        prevBusiness // prevBusiness contain's the most recent state
+      ) =>
+        prevBusiness.map((b) =>
+          b.business_name === businessName
+            ? { ...b, num_of_visits: newStars }
+            : b
+        )
+    );
+  };
+  // Wing's code ends
 
   useEffect(() => {
     getBusinessList();
@@ -49,26 +65,32 @@ function CustomerDash() {
 
   return (
     <div className='customer-dash-container'>
-    {Array.isArray(business) ? 
-    <>
-      <div className='cust-nav'>
-        <h2 className='welcome'>Welcome, {customerName}! </h2>
-        <button className='logout' onClick={() => handleLogOut(navigate)}>Log Out</button>
-      </div>
+      {Array.isArray(business) ? (
+        <>
+          <div className='cust-nav'>
+            <h2 className='welcome'>Welcome, {customerName}! </h2>
+            <button className='logout' onClick={() => handleLogOut(navigate)}>
+              Log Out
+            </button>
+          </div>
 
-      <div className='card-center'>
-        <div className='stamp-cards-container'>
-          {business.map((card, index) => (
-            <StampCard
-              key={index}
-              businessName={card.business_name}
-              stars={card.num_of_visits}
-            />
-          ))}
-        </div>
-      </div>
-
-      </> : 'Access Denied'}
+          <div className='card-center'>
+            <div className='stamp-cards-container'>
+              {business.map((card, index) => (
+                <StampCard
+                  key={index}
+                  businessName={card.business_name}
+                  stars={card.num_of_visits}
+                  phone={card.phone} // Wing's added code
+                  onRedeem={updateStars} // Wing's added code
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        'Access Denied'
+      )}
     </div>
   );
 }
