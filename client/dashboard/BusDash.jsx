@@ -9,13 +9,16 @@ import './BusStyles.css';
 
 //http://localhost:8082/api/users/login
 
-const BusDash = () => {
+const BusDash = () => { 
   const { businessName } = useParams(); // Fetches the business name from the url (i.e. localhost:3000/business/:businessName)
 
   const [companyName] = useState(businessName);
   const [newCustomer, setNewCustomer] = useState({ phone: '', name: '' });
   const [customers, setCustomers] = useState([]); // Initial customers to empty list
+  const [newReward, setNewReward] = useState({ num_of_stars: '', type: '' });
+  const [rewards, setRewards] = useState([]); //list of rewards
 
+  
   async function getCustomerList() {
     try {
       console.log('IS THIS THE PROBLEM');
@@ -27,7 +30,7 @@ const BusDash = () => {
           if (!response) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          console.log('response: ', response);
+         
           return response.json();
         })
         .then((data) => {
@@ -39,8 +42,30 @@ const BusDash = () => {
     }
   }
 
+  async function getRewardsList() {
+    try {
+      fetch(
+        `http://localhost:8082/api/bus/getRewards?businessName=${companyName}`,
+        { credentials: 'include' }
+      )
+        .then((response) => {
+          if (!response) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          console.log('response: ', response);
+          return response.json();
+        })
+        .then((data) => {
+          setRewards(data);
+        });
+    } catch (err) {
+      alert('Error fetching rewards from backend.');
+    }
+  }
+
   useEffect(() => {
-    getCustomerList();
+    getCustomerList()
+    getRewardsList() 
   }, []);
 
   const addCustomer = async () => {
@@ -65,7 +90,6 @@ const BusDash = () => {
           body: JSON.stringify(requestBody),
         }
       );
-
       if (!response) {
         throw new Error('Network response was not ok (addCustomer)');
       }
@@ -104,6 +128,52 @@ const BusDash = () => {
     }
   };
 
+
+  //Add rewards Function
+  const addReward = async () => {
+    const requestBody = {
+      business_name: companyName,
+      num_of_stars: newReward.num_of_stars,
+      type: newReward.type
+    };
+
+    try {
+      const response = await fetch(
+        'http://localhost:8082/api/bus/addRewards',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+      if (!response) {
+        throw new Error('Network response was not ok (addReward)');
+      }
+
+      getRewardsList();
+    } catch (error) {
+      console.error('Error submitting reward:', error);
+    }
+  };
+
+  const deleteReward = async (reward)=> {
+console.log(`from deleteReward`, reward)
+    try {
+      fetch(
+        `http://localhost:8082/api/bus/deleteReward/businessName=${reward.business_name}/${reward.id}`,
+        {   method: "DELETE",
+            credentials: 'include' }
+      )
+        .then((response) => {
+          getRewardsList() 
+});
+       
+    } catch (err) {
+      alert('Error fetching rewards from backend.');
+    }
+  }
   return (
     <div className='dashboard'>
       <BusHeader companyName={companyName} />
@@ -113,7 +183,13 @@ const BusDash = () => {
         addCustomer={addCustomer}
       />
       <BusCustomerList customers={customers} updateVisits={updateVisits} />
-      <BusManageRewards />
+      <BusManageRewards  
+      setNewReward={setNewReward} 
+      addReward={addReward} 
+      deleteReward={deleteReward}
+      newReward={newReward}
+      rewards={rewards}
+      />
     </div>
   );
 };

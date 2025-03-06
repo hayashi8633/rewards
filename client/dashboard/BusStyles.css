@@ -75,7 +75,7 @@ header {
     background-color: #a8bccd;
 }
 
-.customer-list {
+.customer-list,.manage-rewards {
     background-color: azure;
     padding: 20px;
     border-radius: 8px;
@@ -93,6 +93,38 @@ header {
     border-radius: 8px;
     margin-bottom: 10px;
 }
+
+
+.rewards-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.rewards-container *{
+    margin: 0 4px;
+}
+.rewards-container input {
+    border: none;
+    padding: 10px;
+    border: 1px solid beige;
+    border-radius: 8px;
+    background-color: #bed7ef;
+    border-color: gray;
+    color: rgb(255, 255, 255);
+}
+.rewards-container .rewards-count input{
+    width: 10px;
+}
+
+.rewards-container .rewards-count input{
+    max-width: 10%;
+}
+.controls{
+    border-radius: 8px;
+    background-color: #88aed0;
+    border-color: gray;
+}
+
 
 .customer-box {
     max-height: 400px;
