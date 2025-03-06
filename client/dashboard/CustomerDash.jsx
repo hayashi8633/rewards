@@ -24,7 +24,7 @@ function CustomerDash() {
   async function getBusinessList() {
     try {
       const response = await fetch(
-        `http://localhost:8082/api/users/dashboard?customerName=${customerName}`, //slash customername?
+        `http://localhost:8082/api/users/dashboard?customerName=${customerName}`,
         { credentials: 'include' }
       );
       if (!response.ok) {
