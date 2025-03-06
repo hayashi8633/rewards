@@ -1,4 +1,13 @@
 // filepath: /Users/chapmanchappelle/Documents/GitHub/Codesmith/Projects/iteration/rewards/server/tests/app.test.js
+
+// Use jest to mock the pool module
+jest.mock('../models/models.js', () => ({
+  pool: {
+    query: jest.fn(),
+  },
+  checkDatabaseConnection: jest.fn(),
+}));
+
 import request from 'supertest';
 import express from 'express';
 import cookieParser from 'cookie-parser';
@@ -9,14 +18,6 @@ import { userRouter } from '../routes/userRouter.js';
 import { busRouter } from '../routes/busRouter.js';
 // Import pool to be mocked
 import { checkDatabaseConnection, pool } from '../models/models.js';
-
-// Use jest to mock the pool module
-jest.mock('../models/models.js', () => ({
-  pool: {
-    query: jest.fn(),
-  },
-  checkDatabaseConnection: jest.fn(),
-}));
 
 //tests for user routes
 describe('User Router', () => {
@@ -254,7 +255,10 @@ describe('Business Router', () => {
 
   it('POST /api/bus/addStar updates customer star count', async () => {
     //simulate UPDATE operation
-    pool.query.mockResolvedValueOnce({});
+    pool.query.mockResolvedValueOnce({
+      rowCount: 1,
+      rows: [{ num_of_visits: 6 }],
+    });
 
     //Act: call the addStar endpoint
     const response = await request(testApp).post('/api/bus/addStar').send({
@@ -270,7 +274,7 @@ describe('Business Router', () => {
 
   it('POST /api/bus/addRewards adds rewards to the business', async () => {
     //simulate INSERT operation
-    pool.query.mockResolvedValueOnce({ row: {} });
+    pool.query.mockResolvedValueOnce({ rows: [{}] });
 
     //Act: call the addRewards endpoint
     const response = await request(testApp).post('/api/bus/addRewards').send({
@@ -300,9 +304,8 @@ describe('Business Router', () => {
         type: 'Free Item',
       },
     ];
-    pool.query.mockImplementationOnce(() =>
-      Promise.resolve({ rows: mockRewards })
-    );
+    console.log('Setting mock for getRewards:', mockRewards);
+    pool.query.mockResolvedValueOnce({ rows: mockRewards });
 
     // Act: call the getRewards endpoint with the query parameter
     const response = await request(testApp)

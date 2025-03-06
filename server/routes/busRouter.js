@@ -32,7 +32,6 @@ busRouter.post('/addStar', busController.addStar, (req, res) => {
   return res.status(200).send('stars changed!');
 });
 
-
 // ADD rewards to the database
 busRouter.post('/addRewards', busController.addReward, (req, res) => {
   return res.status(200).send('Rewards Program added!');
@@ -43,16 +42,17 @@ busRouter.get('/getRewards', busController.getRewards, (req, res) => {
 });
 
 // DELETE rewards from the database
-busRouter.delete('/deleteReward/:businessName/:id', busController.deleteReward, (req, res) => {
-  return res.status(200).json(res.locals.rewards);
-});
-
-
+busRouter.delete(
+  '/deleteReward/:businessName/:id',
+  busController.deleteReward,
+  (req, res) => {
+    return res.status(200).json(res.locals.rewards);
+  }
+);
 
 // 🪽 🪽 🪽 🪽 🪽 Wing's code begins 🪽 🪽 🪽 🪽 🪽
-busRouter.post('/removeStar', busController.removeStar, (req, res) => {
-  return res.status(200).send('stars redeemed!');
-}); 
+busRouter.post('/removeStar', busController.removeStar);
+
 // 🪽 🪽 🪽 🪽 🪽 Wing's code end 🪽 🪽 🪽 🪽 🪽
 
 export { busRouter };

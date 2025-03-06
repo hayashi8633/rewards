@@ -56,8 +56,8 @@ busController.addStar = async (req, res, next) => {
     const addingStar =
       'UPDATE business_info SET num_of_visits=num_of_visits + $2 WHERE business_name=$1 AND phone=$3';
     const result = await pool.query(addingStar, data);
-    res.locals.updatedStars = result.row[0].num_of_visits; // Wing added code
-    // res.locals.addedStar = result.rows;
+    // res.locals.updatedStars = result.row[0].num_of_visits; // Wing added code
+    res.locals.addedStar = result.rows;
     // console.log('result.rows from addStar middleware: ', result)
     return next();
   } catch (err) {
