@@ -3,7 +3,6 @@ import StampCard from './StampCard';
 import './CustomerDash.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const handleLogOut = (navigate) => {
   fetch('http://localhost:8082/api/users/logout', { credentials: 'include' });
@@ -18,7 +17,7 @@ const handleLogOut = (navigate) => {
 function CustomerDash() {
   const [business, setBusiness] = useState([]);
   const { customerName } = useParams();
-  const { customerName } = useParams();
+  //const { customerName } = useParams();
   const navigate = useNavigate();
 
   async function getBusinessList() {
