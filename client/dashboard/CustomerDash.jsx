@@ -13,7 +13,7 @@ const handleLogOut = (navigate) => {
 //hello Chapman but still display the card info for Katherine
 
 function CustomerDash() {
-  const [business, setBusiness] = useState([]);
+  const [business, setBusiness] = useState('');
   const { customerName } = useParams();
   const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ function CustomerDash() {
 
   return (
     <div className='customer-dash-container'>
-    {business[0] !== undefined ? 
+    {Array.isArray(business) ? 
     <>
       <div className='cust-nav'>
         <h2 className='welcome'>Welcome, {customerName}! </h2>

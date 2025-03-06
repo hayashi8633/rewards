@@ -5,17 +5,6 @@ import { userController } from '../controllers/userController.js';
 // Create a new router
 const userRouter = express.Router();
 
-// User Login
-userRouter.post(
-  '/login',
-  userController.loginUser,
-  userController.setCookie,
-  (req, res) => {
-    console.log('🐣 User Login Processed.');
-    return res.status(200).json(res.locals.user);
-  }
-);
-
 // User Registration
 userRouter.post(
   '/register',
@@ -27,6 +16,17 @@ userRouter.post(
   }
 );
 
+// User Login
+userRouter.post(
+  '/login',
+  userController.loginUser,
+  userController.setCookie,
+  (req, res) => {
+    console.log('🐣 User Login Processed.');
+    return res.status(200).json(res.locals.user);
+  }
+);
+
 // Client Dashboard
 userRouter.get(
   '/dashboard',
@@ -34,7 +34,8 @@ userRouter.get(
   (req, res, next) => {
     if (res.locals.loggedIn) {
       return next();
-    } else {
+    } 
+    else {
       res.redirect('/');
     }
   },
