@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
 import { pool } from '../models/models.js';
-import { supabase } from '../server.js';
+import { supabase } from '../app.js';
 
 const busController = {};
 
@@ -120,7 +120,7 @@ busController.getDash = async (req, res, next) => {
           ELSE b.num_of_visits
         END AS num_of_visits 
       FROM accounts a 
-      INNER JOIN business_info b ON a.name = b.customer_name AND b.business_name = '${data}' 
+      INNER JOIN business_info b ON a.name = b.customer_name AND b.business_name = $1 
       WHERE a.user_type = 'Customer' 
       ORDER BY id DESC`;
 

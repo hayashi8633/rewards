@@ -3,6 +3,7 @@ import StampCard from './StampCard';
 import './CustomerDash.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const handleLogOut = (navigate) => {
   fetch('http://localhost:8082/api/users/logout', { credentials: 'include' });
@@ -11,9 +12,12 @@ const handleLogOut = (navigate) => {
 
 //uses cookies to get user information but should be using the customerName probably? because as is I can type "Chapman" and it will say
 //hello Chapman but still display the card info for Katherine
+//uses cookies to get user information but should be using the customerName probably? because as is I can type "Chapman" and it will say
+//hello Chapman but still display the card info for Katherine
 
 function CustomerDash() {
   const [business, setBusiness] = useState([]);
+  const { customerName } = useParams();
   const { customerName } = useParams();
   const navigate = useNavigate();
 
@@ -33,7 +37,6 @@ function CustomerDash() {
         navigate(-1); // send user back to previous page
         alert('Access Denied'); // alert user
       }
-
       setBusiness(result);
 
       console.log('businesses: ', result);
