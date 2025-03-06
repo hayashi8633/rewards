@@ -3,6 +3,7 @@ const { Pool } = pg;
 import dotenv from 'dotenv';
 dotenv.config();
 
+
 const URI = process.env.SUPABASE_URL;
 
 const pool = new Pool({
