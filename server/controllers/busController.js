@@ -105,6 +105,9 @@ busController.getRewards = async (req, res, next) => {
     }
     // Store result in res.locals
     res.locals.rewards = result.rows;
+    console.log('Business Name:', businessName);
+    console.log('Query result:', result);
+
     return next();
   } catch (err) {
     console.error('Error in getRewards controller:', err);

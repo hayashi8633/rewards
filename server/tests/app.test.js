@@ -3,6 +3,7 @@ import request from 'supertest';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { app as mainApp } from '../app.js';
+import bcrypt from 'bcryptjs';
 // Import routes
 import { userRouter } from '../routes/userRouter.js';
 import { busRouter } from '../routes/busRouter.js';
@@ -41,8 +42,14 @@ describe('User Router', () => {
 
   it('POST /api/user/login returns logged in user info on success', async () => {
     // Create a fake result that simulates a successful login from the DB
+    const password = 'password';
+    const SALT_WORK_FACTOR = 10;
+    const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const mockDBResponse = {
-      rows: [{ name: 'rachel', user_type: 'Customer' }],
+      rows: [
+        { name: 'rachel', user_type: 'Customer', password: hashedPassword },
+      ],
       rowCount: 1,
     };
 
@@ -184,25 +191,40 @@ describe('Business Router', () => {
   });
 
   it('GET /api/bus/busDashboard returns business dashboard info', async () => {
-    const mockDBResponse = {
-      rows: [
-        {
-          customer_name: 'rachel',
-          customer_phone: '1234567890',
-          id: 1,
-          num_of_visits: 5,
-        },
-      ],
-    };
+    // Mock the query in busController.isLoggedIn:
+    // This query should return the business account details matching the cookies.
+    pool.query
+      // First call: isLoggedIn check
+      .mockResolvedValueOnce({
+        rows: [{ name: 'Test Business', phone: '1234567890' }],
+      })
+      // Second call: phone lookup query in busController.getDash
+      .mockResolvedValueOnce({
+        rows: [
+          {
+            id: 1,
+            customer_name: 'rachel',
+            customer_phone: '1234567890',
+            num_of_visits: 5,
+          },
+        ],
+      })
+      // Third call: dashboard query in busController.getDash
+      .mockResolvedValueOnce({
+        rows: [
+          {
+            customer_name: 'rachel',
+            customer_phone: '1234567890',
+            id: 1,
+            num_of_visits: 5,
+          },
+        ],
+      });
 
-    pool.query.mockResolvedValueOnce(mockDBResponse);
+    const response = await request(testApp)
+      .get('/api/bus/busDashboard?businessName=Test Business')
+      .set('Cookie', ['phone=1234567890', 'username=Test Business']);
 
-    //Act: call the busDashboard endpoint with a test business name
-    const response = await request(testApp).get(
-      '/api/bus/busDashboard?businessName=Test Business'
-    );
-
-    //Assert: verify status code and response
     expect(response.status).toBe(200);
     expect(response.body).toEqual([
       {
@@ -232,7 +254,7 @@ describe('Business Router', () => {
 
   it('POST /api/bus/addStar updates customer star count', async () => {
     //simulate UPDATE operation
-    pool.query.mockResolvedValueOnce({ rows: [] });
+    pool.query.mockResolvedValueOnce({});
 
     //Act: call the addStar endpoint
     const response = await request(testApp).post('/api/bus/addStar').send({
@@ -244,5 +266,86 @@ describe('Business Router', () => {
     //Assert: verify the status code and response
     expect(response.status).toBe(200);
     expect(response.text).toBe('stars changed!');
+  });
+
+  it('POST /api/bus/addRewards adds rewards to the business', async () => {
+    //simulate INSERT operation
+    pool.query.mockResolvedValueOnce({ row: {} });
+
+    //Act: call the addRewards endpoint
+    const response = await request(testApp).post('/api/bus/addRewards').send({
+      business_name: 'Test Business',
+      num_of_stars: 10,
+      type: 'Discount',
+    });
+
+    //Assert: verify the status code and response
+    expect(response.status).toBe(200);
+    expect(response.text).toBe('Rewards Program added!');
+  });
+
+  it('GET /api/bus/getRewards returns rewards info', async () => {
+    //simulate get query
+    const mockRewards = [
+      {
+        id: 1,
+        business_name: 'Test Business',
+        num_of_stars: 10,
+        type: 'Discount',
+      },
+      {
+        id: 1,
+        business_name: 'Test Business',
+        num_of_stars: 7,
+        type: 'Free Item',
+      },
+    ];
+    pool.query.mockResolvedValueOnce({ rows: mockRewards });
+
+    //Act: call the getRewards endpoint
+    const response = await request(testApp)
+      .get('/api/bus/getRewards')
+      .query({ businessName: 'Test Business' });
+
+    //Assert: verify the status code and response
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockRewards);
+  });
+
+  it('DELETE /api/bus/deleteReward/:businessName/:id deletes a reward from the DB', async () => {
+    //simulate DELETE
+    pool.query.mockResolvedValueOnce({ rows: [] });
+
+    //Act: call the deleteReward endpoint
+    const response = await request(testApp).delete(
+      '/api/bus/deleteReward/TestBusiness/1'
+    );
+
+    //Assert: verify the status code and response
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual('');
+  });
+
+  it('POST /api/bus/removeStar redeems stars and returns updated amount', async () => {
+    //simulate UPDATE
+    const stars = 4;
+    pool.query.mockResolvedValueOnce({
+      rowCount: 1,
+      roows: [{ num_of_visits: stars }],
+    });
+
+    //Act: call the removeStar endpoint
+    const response = await request(testApp).post('/api/bus/removeStar').send({
+      business_name: 'Test Business',
+      amount: -2,
+      phone: '1234567890',
+    });
+
+    //Assert: verify the status code and response
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      message: 'Stars updated successfully!',
+      stars: stars,
+    });
   });
 });
