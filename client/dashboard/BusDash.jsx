@@ -9,7 +9,7 @@ import './BusStyles.css';
 
 //http://localhost:8082/api/users/login
 
-const BusDash = () => { 
+const BusDash = () => {
   const { businessName } = useParams(); // Fetches the business name from the url (i.e. localhost:3000/business/:businessName)
 
   const [companyName] = useState(businessName);
@@ -19,7 +19,6 @@ const BusDash = () => {
   const [rewards, setRewards] = useState([]); //list of rewards
   const navigate = useNavigate();
 
-  
   async function getCustomerList() {
     try {
       console.log('IS THIS THE PROBLEM');
@@ -31,12 +30,13 @@ const BusDash = () => {
           if (!response) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-         
+
           return response.json();
         })
         .then((data) => {
           if (!Array.isArray(data)) {
-            navigate('/');
+            navigate(-1);
+            alert('Access Denied');
           }
           // console.log("data,", data);
           setCustomers(data);
@@ -68,8 +68,8 @@ const BusDash = () => {
   }
 
   useEffect(() => {
-    getCustomerList()
-    getRewardsList() 
+    getCustomerList();
+    getRewardsList();
   }, []);
 
   const addCustomer = async () => {
@@ -132,26 +132,22 @@ const BusDash = () => {
     }
   };
 
-
   //Add rewards Function
   const addReward = async () => {
     const requestBody = {
       business_name: companyName,
       num_of_stars: newReward.num_of_stars,
-      type: newReward.type
+      type: newReward.type,
     };
 
     try {
-      const response = await fetch(
-        'http://localhost:8082/api/bus/addRewards',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      const response = await fetch('http://localhost:8082/api/bus/addRewards', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
       if (!response) {
         throw new Error('Network response was not ok (addReward)');
       }
@@ -162,22 +158,19 @@ const BusDash = () => {
     }
   };
 
-  const deleteReward = async (reward)=> {
-console.log(`from deleteReward`, reward)
+  const deleteReward = async (reward) => {
+    console.log(`from deleteReward`, reward);
     try {
       fetch(
         `http://localhost:8082/api/bus/deleteReward/businessName=${reward.business_name}/${reward.id}`,
-        {   method: "DELETE",
-            credentials: 'include' }
-      )
-        .then((response) => {
-          getRewardsList() 
-});
-       
+        { method: 'DELETE', credentials: 'include' }
+      ).then((response) => {
+        getRewardsList();
+      });
     } catch (err) {
       alert('Error fetching rewards from backend.');
     }
-  }
+  };
   return (
     <div className='dashboard'>
       <BusHeader companyName={companyName} />
@@ -187,12 +180,12 @@ console.log(`from deleteReward`, reward)
         addCustomer={addCustomer}
       />
       <BusCustomerList customers={customers} updateVisits={updateVisits} />
-      <BusManageRewards  
-      setNewReward={setNewReward} 
-      addReward={addReward} 
-      deleteReward={deleteReward}
-      newReward={newReward}
-      rewards={rewards}
+      <BusManageRewards
+        setNewReward={setNewReward}
+        addReward={addReward}
+        deleteReward={deleteReward}
+        newReward={newReward}
+        rewards={rewards}
       />
     </div>
   );

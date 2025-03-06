@@ -16,6 +16,7 @@ const handleLogOut = (navigate) => {
 
 function CustomerDash() {
   const [business, setBusiness] = useState('');
+  const [rewardObj, updateRewards] = useState({});
   const { customerName } = useParams();
   const navigate = useNavigate();
 
@@ -34,15 +35,45 @@ function CustomerDash() {
         // navigate('/access-denied'); // go to access denied page
         // frontend redirect if user tries to go to another user's page
         console.log('NAVIGATING BACK TO USER PAGE');
-       navigate(-1); // send user back to previous page
-       alert('Access Denied'); // alert user
-      } 
+        navigate(-1); // send user back to previous page
+        alert('Access Denied'); // alert user
+      }
       setBusiness(result);
 
       console.log('businesses: ', result);
     } catch (err) {
       console.log('Error fetching customers from backend.');
     }
+  }
+
+  function getRewards(businessName) {
+    // const response = await
+    console.log('getting rewards for: ', businessName);
+    fetch(`http://localhost:8082/api/users/rewards/${businessName}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log('get rewards result: ', result);
+        const newRewards = {};
+        newRewards[businessName] = result;
+        // console.log('REWARD OBJECT', rewardObj);
+        console.log('NEW REWARDS RECEVIED', newRewards);
+
+        const update = Object.assign({}, rewardObj, newRewards); //...rewardObj, newRewards };
+        console.log('update! ', update);
+
+        // updateRewards({ ...rewardObj, [business]: result });
+        // updateRewards(newRewards);
+        updateRewards(update);
+      });
+    // const result = await response.json();
+    // console.log('get rewards result: ', result);
+    // // updateRewards(Object.assign({}, rewardObj, { [business]: result }));
+    // updateRewards({ ...rewardObj, [business]: result });
+    // console.log('rewards object: ', rewardObj);
   }
   // Wing's added code:
   const updateStars = (businessName, newStars) => {
@@ -62,6 +93,18 @@ function CustomerDash() {
   useEffect(() => {
     getBusinessList();
   }, []);
+
+  useEffect(() => {
+    if (Array.isArray(business)) {
+      business.map((card) => {
+        getRewards(card.business_name);
+      });
+    }
+  }, [business]);
+
+  useEffect(() => {
+    console.log('rewardObj! ', rewardObj);
+  }, [rewardObj]);
 
   return (
     <div className='customer-dash-container'>
@@ -83,6 +126,7 @@ function CustomerDash() {
                   stars={card.num_of_visits}
                   phone={card.phone} // Wing's added code
                   onRedeem={updateStars} // Wing's added code
+                  rewards={rewardObj[card.business_name]}
                 />
               ))}
             </div>

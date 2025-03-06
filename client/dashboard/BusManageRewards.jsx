@@ -36,7 +36,7 @@ const BusManageRewards = ({ newReward, setNewReward, addReward ,rewards, deleteR
       </button>
      </div>
       <ul>
-       {rewards.map((reward, key)=>(
+       {Array.isArray(rewards) && rewards.map((reward, key)=>(
          <div key={key} className='rewards-container'>
          <p>{reward.num_of_stars} stars</p>
          <span>=</span>
