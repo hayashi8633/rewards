@@ -31,14 +31,15 @@ userRouter.post(
 userRouter.get(
   '/dashboard',
   userController.isLoggedIn,
-  (req, res, next) => {
-    if (res.locals.loggedIn) {
-      return next();
-    } 
-    else {
-      res.redirect('/');
-    }
-  },
+  // this can be removed
+  // (req, res, next) => {
+  //   if (res.locals.loggedIn) {
+  //     return next();
+  //   } 
+    // else {
+    //   res.redirect('/');
+    // }
+  // },
   userController.getDash,
   (req, res) => {
     return res.status(200).json(res.locals.dashboard);

@@ -54,6 +54,7 @@ userController.register = async (req, res, next) => {
       usertype: usertype.toLowerCase(),
       phone: phone,
     };
+    // res.locals.isLoggedIn = true;
     return next();
     // if it does, return an error (or yell at the person registering and call em a dummy)
     // if it doesn't, log them in! and add a new row in business_name Table
@@ -140,9 +141,18 @@ userController.loginUser = async (req, res, next) => {
 
 // THIS IS THE ONLY MIDDLEWARE THAT IS *ONLY* FOR CUSTOMERS
 userController.getDash = async (req, res, next) => {
+  const { username } = req.cookies;
+  console.log('logged in user is, ', username);
+  const endpoint = req.query.customerName;
+  console.log("LOGGED IN STATUS FROM GET DASH", res.locals.loggedIn);
+  if (res.locals.loggedIn && username === endpoint) {
+    console.log("SENDING DASH NOW");
+    // return res.redirect('/');
+  
+
   try {
     //logic for customer dashboard getting(?)
-
+console.log('RES LOCALS OBJECT', res.locals)
     const customerName = [req.query.customerName];
     //use req.query.customerName to get phone number
     //then pass that into data
@@ -165,13 +175,19 @@ userController.getDash = async (req, res, next) => {
 
     // get names of all the businesses they're a rewards member at, the number of times they've visited each business, and the customer's name
     // display it (aka feed it to the front end):D
-  } catch (err) {
+  }
+  catch (err) {
     // error handling
     return next({
       log: 'log: Error getting customer dashboard',
       message: 'Message: Error getting customer dashboard',
     });
   }
+  }
+  else return next({
+    log: 'log: Unauthorized access',
+      message: 'Message: Access Denied'
+  })
 };
 
 userController.isLoggedIn = (req, res, next) => {
@@ -185,6 +201,8 @@ userController.isLoggedIn = (req, res, next) => {
   //SQL query to make sure that the ID and username match an ID and username in the database
   const text = 'SELECT * FROM accounts WHERE phone=$1 AND name=$2';
   const values = [phone, username];
+  // is the below necessary for anything? added it to be safe, but needs further testing
+  res.locals.loggedIn = false; 
   pool.query(text, values).then((response) => {
     // console.log('here is what isLogged in found: ', response);
     if (
@@ -193,11 +211,15 @@ userController.isLoggedIn = (req, res, next) => {
       username === endpoint
     ) {
       res.locals.loggedIn = true;
+      // console.log('LOGGED IN CHECK', res.locals.loggedIn);
       return next();
     } else {
       console.log('you tried to go to the wrong page!');
-      res.locals.loggedIn = false;
-      return next();
+      // res.locals.loggedIn = false;
+      return next({
+        log: 'User not logged in.',
+        message: 'Log in for access.'
+      });
       // res.redirect('http://localhost:5173/');
       //this does not work!
     }
