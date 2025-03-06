@@ -285,7 +285,7 @@ describe('Business Router', () => {
   });
 
   it('GET /api/bus/getRewards returns rewards info', async () => {
-    //simulate get query
+    // Simulate the database returning rewards
     const mockRewards = [
       {
         id: 1,
@@ -294,20 +294,22 @@ describe('Business Router', () => {
         type: 'Discount',
       },
       {
-        id: 1,
+        id: 2,
         business_name: 'Test Business',
         num_of_stars: 7,
         type: 'Free Item',
       },
     ];
-    pool.query.mockResolvedValueOnce({ rows: mockRewards });
+    pool.query.mockImplementationOnce(() =>
+      Promise.resolve({ rows: mockRewards })
+    );
 
-    //Act: call the getRewards endpoint
+    // Act: call the getRewards endpoint with the query parameter
     const response = await request(testApp)
       .get('/api/bus/getRewards')
       .query({ businessName: 'Test Business' });
 
-    //Assert: verify the status code and response
+    // Assert: verify the status code and response
     expect(response.status).toBe(200);
     expect(response.body).toEqual(mockRewards);
   });
@@ -331,7 +333,7 @@ describe('Business Router', () => {
     const stars = 4;
     pool.query.mockResolvedValueOnce({
       rowCount: 1,
-      roows: [{ num_of_visits: stars }],
+      rows: [{ num_of_visits: stars }],
     });
 
     //Act: call the removeStar endpoint
