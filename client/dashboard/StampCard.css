@@ -64,10 +64,12 @@
   }
 
   .stars-needed {
+    font-weight: bold;
     margin-top: 5px;
   }
   /* Wing's code */
   .stars-met {
+    font-weight: bold;
     margin-bottom: 5px;
   }
   
