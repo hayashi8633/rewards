@@ -55,6 +55,7 @@ busController.addStar = async (req, res, next) => {
     const addingStar =
       'UPDATE business_info SET num_of_visits=num_of_visits + $2 WHERE business_name=$1 AND phone=$3';
     const result = await pool.query(addingStar, data);
+    res.locals.updatedStars = result.row[0].num_of_visits; // Wing added code
     // res.locals.addedStar = result.rows;
     // console.log('result.rows from addStar middleware: ', result)
     return next();
@@ -98,6 +99,39 @@ busController.isLoggedIn = (req, res, next) => {
     }
   });
 };
+
+// 🪽 🪽 🪽 🪽 🪽 Wing's code begins 🪽 🪽 🪽 🪽 🪽
+
+  busController.removeStar = async (req, res) => {
+    try {
+      const { business_name, amount, phone } = req.body;
+      console.log('🔻 Processing star redemption:', req.body);
+  
+      const updateQuery = `
+        UPDATE business_info 
+        SET num_of_visits = GREATEST(num_of_visits + $2, 0) 
+        WHERE business_name = $1 AND phone = $3
+        RETURNING num_of_visits;
+      `;
+  
+      const result = await pool.query(updateQuery, [business_name, amount, phone]);
+  
+      if (result.rowCount === 0) {
+        return res.status(404).json({ message: 'Business not found' });
+      }
+      console.log('✅ Redemption successful. Updated stars:', result.rows[0].num_of_visits);
+      return res.status(200).json({
+        message: "Stars updated successfully!",
+        stars: result.rows[0].num_of_visits, 
+      });
+  
+    } catch (err) {
+      console.error("Error updating stars:", err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
+// 🪽 🪽 🪽 🪽 🪽 Wing's code end 🪽 🪽 🪽 🪽 🪽
 
 // This middleware will be used to login the customer
 busController.getDash = async (req, res, next) => {
