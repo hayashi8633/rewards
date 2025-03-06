@@ -1,7 +1,7 @@
 // Import the users object
 // import db from "../models/models.js"
-import { pool } from '../models/models.js';
-import { supabase } from '../server.js';
+import { pool } from "../models/models.js";
+import { supabase } from "../server.js";
 
 const busController = {};
 
@@ -9,8 +9,8 @@ const busController = {};
 
 busController.addCustomer = async (req, res, next) => {
   try {
-    console.log('🚀 add customer middleware reached!');
-    console.log('Request body: ', req.body);
+    console.log("🚀 add customer middleware reached!");
+    console.log("Request body: ", req.body);
     // console.log('request query:', req.query);
     //logic for adding a customer to the rewards program
     // check if phone # exists first
@@ -32,10 +32,10 @@ busController.addCustomer = async (req, res, next) => {
     return next();
   } catch (err) {
     // error handling
-    console.log('error: ', err);
+    console.log("error: ", err);
     return next({
-      log: 'log: Error adding customer',
-      message: 'Message: Error adding customer',
+      log: "log: Error adding customer",
+      message: "Message: Error adding customer",
     });
   }
 };
@@ -50,10 +50,10 @@ busController.addStar = async (req, res, next) => {
     // req.body.phone is included in data because each component that is shown on the business dashboard should have a phone number associated with it (not just displayed) -> if i console.log(phone) in the onclick, the phone number of that specific user should be console logged
     // We're getting the user from res.body
     const data = [req.body.business_name, req.body.amount, req.body.phone];
-    console.log('Data from POST request in addStar: ', req.body);
+    console.log("Data from POST request in addStar: ", req.body);
 
     const addingStar =
-      'UPDATE business_info SET num_of_visits=num_of_visits + $2 WHERE business_name=$1 AND phone=$3';
+      "UPDATE business_info SET num_of_visits=num_of_visits + $2 WHERE business_name=$1 AND phone=$3";
     const result = await pool.query(addingStar, data);
     // res.locals.addedStar = result.rows;
     // console.log('result.rows from addStar middleware: ', result)
@@ -61,15 +61,88 @@ busController.addStar = async (req, res, next) => {
   } catch (err) {
     // error handling
     return next({
-      log: 'log: Error adding a star',
-      message: 'Message: Error adding a star',
+      log: "log: Error adding a star",
+      message: "Message: Error adding a star",
+    });
+  }
+};
+
+//ADD REWARD CONTROLLER//
+busController.addReward = async (req, res, next) => {
+  try {
+    const data = [req.body.business_name, req.body.num_of_stars, req.body.type];
+
+    const addingReward = `INSERT INTO rewards (business_name, num_of_stars, type) VALUES ($1, $2, $3)`;
+    const result = await pool.query(addingReward, data);
+    res.locals.rewards = result.row;
+    return next();
+  } catch (err) {
+    console.error("from the reward controller", err);
+    return next({
+      log: "log: Error adding a reward",
+      message: "Message: Error adding a reward",
+    });
+  }
+};
+//GET REWARD CONTROLLER//
+busController.getRewards = async (req, res, next) => {
+  try {
+    console.log("🤯 get rewards middleware reached!");
+    //grab the business name from the request if falsey throw an error
+    const { businessName } = req.query;
+    if (!businessName) {
+      return res.status(400).json({ error: "Business name is required" });
+    }
+    //grab matching data from the database
+    const query = `SELECT * FROM rewards 
+    WHERE business_name = $1`;
+    const result = await pool.query(query, [businessName]);
+    //if database empty throw an error
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "No rewards found" });
+    }
+    // Store result in res.locals
+    res.locals.rewards = result.rows;
+    return next();
+  } catch (err) {
+    console.error("Error in getRewards controller:", err);
+    return next({
+      log: "Error at busController.getRewards",
+      message: "Error getting rewards",
+    });
+  }
+};
+
+//DELETE REWARD CONTROLLER//
+busController.deleteReward = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log(`from deleteReward:`, id);
+    // if (!id) {
+    //   return res.status(400).json({ error: "bad id" });
+    // }
+    //grab matching data from the database
+    const values = [id];
+    const query = `DELETE FROM rewards 
+    WHERE id = $1`;
+    await pool.query(query, values);
+    //if database empty throw an error
+    // if (result.rows.length === 0) {
+    //   return res.status(404).json({ message: "No reward with that ID found" });
+    // }
+    return next();
+  } catch (err) {
+    console.error("Error in deleteRewards controller:", err);
+    return next({
+      log: "Error at busController.deleteRewards",
+      message: "Error getting delete",
     });
   }
 };
 
 // This middleware will be used to login the customer
 busController.getDash = async (req, res, next) => {
-  console.log('Business DASHBOARD middleware reached');
+  console.log("Business DASHBOARD middleware reached");
   try {
     //logic for business dashboard getting(?)
     // get names of all rewards members, the number of times they've visited, customer's phone number and the customer's name
@@ -78,7 +151,7 @@ busController.getDash = async (req, res, next) => {
     // Get business name from req.query
     const data = [req.query.businessName];
 
-    console.log('data from busController.getDash: ', data);
+    console.log("data from busController.getDash: ", data);
     // TODO i think the "coalesce(b.num_of_visits, 0)" could become an issue cuz it changes NULL values to 0 automatically but our table doesn't have NULLs, and because we kinda want the database to reset to 0 after it hits 10
     // might also have to get rid of the quotes around ${data}
     const busDash = `SELECT a.name AS customer_name, 
@@ -108,8 +181,8 @@ busController.getDash = async (req, res, next) => {
   } catch (err) {
     // error handling
     return next({
-      log: 'log: Error getting the business dashboard',
-      message: 'Message: Error getting the business dashboard',
+      log: "log: Error getting the business dashboard",
+      message: "Message: Error getting the business dashboard",
     });
   }
 };

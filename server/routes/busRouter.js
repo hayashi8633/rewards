@@ -21,4 +21,19 @@ busRouter.post('/addStar', busController.addStar, (req, res) => {
   return res.status(200).send('stars changed!');
 });
 
+// ADD rewards to the database
+busRouter.post('/addRewards', busController.addReward, (req, res) => {
+  return res.status(200).send('Rewards Program added!');
+});
+// GET rewards from the database
+busRouter.get('/getRewards', busController.getRewards, (req, res) => {
+  return res.status(200).json(res.locals.rewards);
+});
+
+// DELETE rewards from the database
+busRouter.delete('/deleteReward/:businessName/:id', busController.deleteReward, (req, res) => {
+  return res.status(200).json(res.locals.rewards);
+});
+
+
 export { busRouter };
